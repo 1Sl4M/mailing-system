@@ -7,6 +7,7 @@ import { Groups } from "./entity/groups.entity";
 import { Spam } from "./entity/spam.entity";
 import { Letters } from "./entity/letters.entity";
 import { SentUsers } from "./entity/sent_users.entity";
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SentUsers } from "./entity/sent_users.entity";
       entities: [Users, Groups, Spam, Letters, SentUsers],
       synchronize: false,
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
