@@ -3,7 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
+  OneToMany, OneToOne,
   PrimaryGeneratedColumn
 } from "typeorm";
 import { IsAlpha, MaxLength } from "class-validator";
@@ -27,7 +27,7 @@ export class Spam {
   @MaxLength(1)
   status_code: string;
 
-  @ManyToOne(() => Groups, group => group.spam)
+  @OneToOne(() => Groups, group => group.spam)
   @JoinColumn({ name: "group_id" })
   group: Groups;
 
@@ -35,6 +35,6 @@ export class Spam {
   @JoinColumn({ name: "letter_id" })
   letter: Letters;
 
-  @OneToMany(() => SentUsers, sentUsers => sentUsers.spam_id)
-  sentUsers: SentUsers[];
+  @OneToOne(() => SentUsers, sentUsers => sentUsers.spam_id)
+  sentUsers: SentUsers;
 }

@@ -13,6 +13,6 @@ export class Letters {
   @Column()
   content: string;
 
-  @OneToMany(() => Spam, spam => spam.letter)
-  spam: Spam[];
+  @OneToOne(() => Spam, spam => spam.letter)
+  spam: Spam;
 }

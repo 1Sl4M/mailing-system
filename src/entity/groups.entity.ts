@@ -1,24 +1,32 @@
-import { Column, Entity, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Users } from "./users.entity";
 import { Spam } from "./spam.entity";
+import 'reflect-metadata';
 
 @Entity({ name: 'groups' })
 export class Groups {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   title: string;
 
   @Column()
   description: string;
 
-  @Column()
-  date_of_creation: Date;
+  // @CreateDateColumn()
+  // createdgroupat: Date;
 
   @ManyToMany(() => Users, user => user.groups)
   users: Users[];
 
-  @OneToMany(() => Spam, spam => spam.group)
-  spam: Spam[];
+  @OneToOne(() => Spam, spam => spam.group)
+  spam: Spam;
 }

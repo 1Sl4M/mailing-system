@@ -1,14 +1,14 @@
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
 import { IsAlpha, MaxLength } from "class-validator";
 import { Users } from "./users.entity";
 import { Spam } from "./spam.entity";
 
 @Entity({ name: 'sent_users' })
 export class SentUsers {
-  @Column()
+  @PrimaryColumn()
   user_id: number;
 
-  @Column()
+  @PrimaryColumn()
   spam_id: number;
 
   @Column()
@@ -16,9 +16,9 @@ export class SentUsers {
   @MaxLength(1)
   status_code: string;
 
-  @ManyToOne(() => Users, users => users.id)
+  @OneToOne(() => Users, users => users.id)
   users: Users;
 
-  @ManyToOne(() => Spam, spam => spam.id)
+  @OneToOne(() => Spam, spam => spam.id)
   spam: Spam;
 }

@@ -8,20 +8,27 @@ import { Spam } from "./entity/spam.entity";
 import { Letters } from "./entity/letters.entity";
 import { SentUsers } from "./entity/sent_users.entity";
 import { UsersModule } from './users/users.module';
+import { ConfigModule } from "@nestjs/config";
+import { LettersModule } from './letters/letters.module';
+import { GroupsModule } from './groups/groups.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
       port: Number(process.env.POSTGRES_PORT) || 5432,
       username: process.env.POSTGRES_USERNAME,
-      password: process.env.POSTGRES_PASSWORD,
+      password: String(process.env.POSTGRES_PASSWORD),
       database: process.env.POSTGRES_DATABASE,
       entities: [Users, Groups, Spam, Letters, SentUsers],
       synchronize: false,
     }),
+    TypeOrmModule.forFeature([Users, Letters, Groups]),
     UsersModule,
+    LettersModule,
+    GroupsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
