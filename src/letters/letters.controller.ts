@@ -4,13 +4,17 @@ import { LetterService } from "./letter.service";
 import { UsersService } from "../users/users.service";
 import { CreateLetterDto } from "./dto/create-letter.dto";
 import { Letters } from "../entity/letters.entity";
+import { Spam } from "../entity/spam.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 @Controller('letters')
 export class LettersController {
   constructor(
     @Inject(MailService) private readonly mailService: MailService,
     private readonly letterService: LetterService,
-    @Inject(UsersService) private readonly usersService: UsersService
+    @Inject(UsersService) private readonly usersService: UsersService,
+    @InjectRepository(Spam) private readonly spamRepository: Repository<Spam>
   ) {}
 
   @Get('send-email/:id')
@@ -30,6 +34,21 @@ export class LettersController {
     } catch (error) {
       return 'Ошибка при отправке письма: ' + error.message;
     }
+  }
+
+  @Get('send-email/:id/:groupId')
+  async sendMailToGroupMembers(@Param('groupId') groupId: number, @Param('id') id: number) {
+    const letter = await this.letterService.getLetterFromDatabase(id);
+
+    await this.mailService.sendMailToGroupMembers(groupId, letter.theme, letter.content)
+
+    const spam = new Spam();
+    spam.group_id = groupId;
+    spam.letter_id = id;
+
+    await this.spamRepository.save(spam);
+
+    return 'Письмо отправлено в группу';
   }
 
 

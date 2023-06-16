@@ -5,10 +5,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Users } from "../entity/users.entity";
 import { Groups } from "../entity/groups.entity";
 import { Letters } from "../entity/letters.entity";
+import { Spam } from "../entity/spam.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users, Groups, Letters])
+    TypeOrmModule.forFeature([Users, Groups, Letters, Spam])
   ],
   controllers: [GroupsController],
   providers: [GroupsService]
