@@ -25,7 +25,7 @@ import { GroupsModule } from './groups/groups.module';
       entities: [Users, Groups, Spam, Letters, SentUsers],
       synchronize: false,
     }),
-    TypeOrmModule.forFeature([Users, Letters, Groups, Spam]),
+    TypeOrmModule.forFeature([Users, Letters, Groups, Spam, SentUsers]),
     UsersModule,
     LettersModule,
     GroupsModule,

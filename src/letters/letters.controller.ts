@@ -1,4 +1,14 @@
-import { Controller, Get, Param, Inject, Post, Body, Query, NotFoundException } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  Inject,
+  Post,
+  Body,
+  Query,
+  NotFoundException,
+  BadRequestException
+} from "@nestjs/common";
 import { MailService } from "../users/mail.service";
 import { LetterService } from "./letter.service";
 import { UsersService } from "../users/users.service";
@@ -40,13 +50,19 @@ export class LettersController {
   async sendMailToGroupMembers(@Param('groupId') groupId: number, @Param('id') id: number) {
     const letter = await this.letterService.getLetterFromDatabase(id);
 
-    await this.mailService.sendMailToGroupMembers(groupId, letter.theme, letter.content)
+    if(!letter) {
+      throw new BadRequestException('Letter not found');
+    }
 
     const spam = new Spam();
     spam.group_id = groupId;
     spam.letter_id = id;
 
+
+
     await this.spamRepository.save(spam);
+
+    await this.mailService.sendMailToGroupMembers(groupId, letter.theme, letter.content, spam.id)
 
     return 'Письмо отправлено в группу';
   }

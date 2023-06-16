@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
 import { IsAlpha, MaxLength } from "class-validator";
 import { Users } from "./users.entity";
 import { Spam } from "./spam.entity";
@@ -17,8 +17,10 @@ export class SentUsers {
   status_code: string;
 
   @OneToOne(() => Users, users => users.id)
+  @JoinColumn({ name: 'user_id' })
   users: Users;
 
   @OneToOne(() => Spam, spam => spam.id)
+  @JoinColumn({ name: 'spam_id' })
   spam: Spam;
 }

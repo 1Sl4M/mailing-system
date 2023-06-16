@@ -5,6 +5,7 @@ import { Groups } from "../entity/groups.entity";
 import { Repository } from "typeorm";
 import { Users } from "../entity/users.entity";
 import { Spam } from "../entity/spam.entity";
+import { SentUsers } from "../entity/sent_users.entity";
 
 @Injectable()
 export class MailService {
@@ -12,6 +13,7 @@ export class MailService {
     @InjectRepository(Groups) private readonly groupsRepository: Repository<Groups>,
     @InjectRepository(Users) private readonly usersRepository: Repository<Users>,
     @InjectRepository(Spam) private readonly spamRepository: Repository<Spam>,
+    @InjectRepository(SentUsers) private readonly sentUsersRepository: Repository<SentUsers>,
     ) {}
   
   private transporter = createTransport({
@@ -33,7 +35,7 @@ export class MailService {
     await this.transporter.sendMail(mailOptions);
   }
 
-  async sendMailToGroupMembers(groupId: number, subject: string, text: string): Promise<void> {
+  async sendMailToGroupMembers(groupId: number, subject: string, text: string, spamId: number): Promise<void> {
     const users = await this.usersRepository.find({
       where: {
         groups: {
@@ -43,8 +45,12 @@ export class MailService {
     });
 
     for (const user of users) {
+      const sentUser = new SentUsers();
+      sentUser.user_id = user.id;
+      sentUser.spam_id = spamId;
+
+      await this.sentUsersRepository.save(sentUser);
       await this.sendMail(user.email, subject, text);
     }
   }
-
 }
