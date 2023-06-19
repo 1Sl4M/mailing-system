@@ -1,0 +1,29 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.btn {
+    padding: 6px 12px;
+    margin-right: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-delete {
+    background-color: #f44336;
+}
+
+.search-input {
+    width: 200px;
+    padding: 6px;
+    margin-bottom: 10px;
+}

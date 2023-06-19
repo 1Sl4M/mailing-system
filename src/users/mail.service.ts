@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { createTransport } from 'nodemailer';
 import { InjectRepository } from "@nestjs/typeorm";
 import { Groups } from "../entity/groups.entity";

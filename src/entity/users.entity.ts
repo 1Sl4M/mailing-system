@@ -3,7 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinTable,
-  ManyToMany,
+  ManyToMany, OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Unique
@@ -52,6 +52,6 @@ export class Users {
   })
   groups: Groups[];
 
-  @OneToOne(() => SentUsers, sentUsers => sentUsers.user_id)
-  sentUsers: SentUsers;
+  @OneToMany(() => SentUsers, sentUsers => sentUsers.user_id)
+  sentUsers: SentUsers[];
 }

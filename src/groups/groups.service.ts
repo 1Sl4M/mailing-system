@@ -6,12 +6,14 @@ import { FindOneOptions, Repository } from "typeorm";
 import { Users } from "../entity/users.entity";
 import { CreateGroupDto } from "./dto/create-group.dto";
 import { FilterDto } from "../users/dto/filter.dto";
+import { SentUsers } from "../entity/sent_users.entity";
 
 @Injectable()
 export class GroupsService {
   constructor(
     @InjectRepository(Groups) private readonly groupsRepository: Repository<Groups>,
     @InjectRepository(Users) private readonly usersRepository: Repository<Users>,
+    @InjectRepository(SentUsers) private readonly sentUsersRepository: Repository<SentUsers>,
   ) {
   }
 
@@ -127,14 +129,14 @@ export class GroupsService {
   async removeUserFromAllGroups(userId: number): Promise<{ msg: string }> {
     const user = await this.usersRepository.findOneBy({ id: userId });
 
-    if(!user) {
+    if (!user) {
       throw new NotFoundException('User not found');
     }
 
     const query = `
-      SELECT group_id FROM users_and_groups
-      WHERE user_id = ${userId}
-    `;
+    SELECT group_id FROM users_and_groups
+    WHERE user_id = ${userId}
+  `;
 
     const groups = await this.groupsRepository.query(query);
 
@@ -142,11 +144,17 @@ export class GroupsService {
       await this.removeUserFromGroup(group.id, userId);
     }
 
-    await this.usersRepository.save(user);
+    const deleteQuery = `
+    DELETE FROM sent_users WHERE user_id = ${userId}
+  `;
+
+    await this.sentUsersRepository.query(deleteQuery);
+
+    await this.usersRepository.delete(userId);
 
     return {
-      msg: 'User deleted from all groups'
-    }
+      msg: 'User deleted from all groups',
+    };
   }
 
   async removeUserFromGroup(groupId: number, userId: number): Promise<{ title: string; id: number; description: string; users: Users[] }[]> {

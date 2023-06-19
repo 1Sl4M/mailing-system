@@ -58,15 +58,12 @@ export class LettersController {
     spam.group_id = groupId;
     spam.letter_id = id;
 
-
-
     await this.spamRepository.save(spam);
 
     await this.mailService.sendMailToGroupMembers(groupId, letter.theme, letter.content, spam.id)
 
     return 'Письмо отправлено в группу';
   }
-
 
   @Post()
   async createLetter(@Body() dto: CreateLetterDto) {

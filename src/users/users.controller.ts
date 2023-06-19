@@ -5,10 +5,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Users } from "../entity/users.entity";
 import { FilterDto } from "./dto/filter.dto";
 import { DeleteResult } from "typeorm";
+import { GroupsService } from "../groups/groups.service";
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService, private readonly groupsService: GroupsService) {}
 
   @Get()
   getUsers(@Query() dto: FilterDto): Promise<Users[]> {
@@ -34,13 +35,18 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
 
+  @Patch(':city/:id')
+  createCity(@Param('id') id: number, @Param('city') city: string, ) {
+    return this.usersService.createCity(city, id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto): Promise<Users> {
     return this.usersService.update(+id, updateUserDto);
   }
 
-  @Delete(':userId/groups/:groupId')
-  remove(@Param('userId') userId: number, @Param('groupId') groupId: number): Promise<DeleteResult> {
-    return this.usersService.remove(groupId, userId);
+  @Delete(':userId')
+  remove(@Param('userId') userId: number): Promise<{ msg: string }> {
+    return this.groupsService.removeUserFromAllGroups(userId);
   }
 }

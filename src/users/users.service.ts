@@ -17,7 +17,6 @@ export class UsersService {
   ) {}
 
   async create(dto: CreateUserDto): Promise<Users> {
-    console.log(dto);
     const { email } = dto;
     const existingUser = await this.findByEmailForSendMessage(email);
 
@@ -30,6 +29,29 @@ export class UsersService {
       user.country = dto.country;
 
       return this.usersRepository.save(user);
+    }
+  }
+
+  async createCity(city: string, id: number) {
+    const user = await this.usersRepository.findOneBy({ id: id });
+
+    if(user.city) {
+      const query = `
+      update users
+      set city = $1
+      where id = $2
+      `;
+
+      await this.usersRepository.query(query, [city, id]);
+
+      return;
+    }
+    user.city = city;
+
+    await this.usersRepository.save(user);
+
+    return {
+      msg: 'User updated successfully'
     }
   }
 
