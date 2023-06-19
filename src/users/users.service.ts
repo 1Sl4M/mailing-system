@@ -60,22 +60,32 @@ export class UsersService {
 
     let users = await this.findAll();
 
-    if(search) {
+    if (search) {
       users = users.filter(user =>
-        user.id.toString().includes(search) ||
-        user.name.includes(search) ||
-        user.surname.includes(search) ||
-        user.otchestvo.includes(search) ||
-        user.email.includes(search) ||
-        user.country.includes(search)
+        (user.id && user.id.toString().includes(search)) ||
+        (user.name && user.name.includes(search)) ||
+        (user.surname && user.surname.includes(search)) ||
+        (user.otchestvo && user.otchestvo.includes(search)) ||
+        (user.email && user.email.includes(search)) ||
+        (user.country && user.country.includes(search))
       );
     }
 
     return users;
   }
 
-  findAll(): Promise<Users[]> {
-    return this.usersRepository.find();
+
+  async findAll(): Promise<Users[]> {
+    const users = await this.usersRepository.find();
+
+    const query = `
+    select * from users order by id
+    `;
+
+    await this.usersRepository.query(query);
+    await this.usersRepository.save(users);
+
+    return users;
   }
 
   findOne(id: number): Promise<Users>  {

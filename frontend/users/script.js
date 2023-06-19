@@ -8,12 +8,30 @@ $(document).ready(function() {
     performSearch(searchValue);
   });
 
+  $('#create-user-button').on('click', function() {
+    let name = prompt('Enter user name:');
+    let surname = prompt('Enter user surname:');
+    let country = prompt('Enter user country:');
+    let city = prompt('Enter user city:');
+    let email = prompt('Enter user email:');
+
+    let newUser = {
+      name: name,
+      surname: surname,
+      country: country,
+      city: city,
+      email: email
+    };
+
+    createUser(newUser);
+  });
+
   function getUsers() {
     $.ajax({
       url: `${defaultUrl}/users`,
       method: 'GET',
       success: function(response) {
-        let tbody = $('#user-table tbody');
+        var tbody = $('#user-table tbody');
         tbody.empty();
 
         response.forEach(function(user) {
@@ -50,22 +68,15 @@ $(document).ready(function() {
             let currentName = row.find('td:nth-child(2)').text();
             let currentSurname = row.find('td:nth-child(3)').text();
             let currentCountry = row.find('td:nth-child(4)').text();
-            let currentCity = row.find('.city-select').val();
             let currentEmail = row.find('td:nth-child(6)').text();
 
             let updatedName = prompt('Input your name:');
             let updatedSurname = prompt('Input your surname:');
             let updatedEmail = prompt('Input your email:');
 
-            if (!updatedName) {
-              updatedName = currentName;
-            }
-            if (!updatedSurname) {
-              updatedSurname = currentSurname;
-            }
-            if (!updatedEmail) {
-              updatedEmail = currentEmail;
-            }
+            if (!updatedName) { updatedName = currentName;}
+            if (!updatedSurname) { updatedSurname = currentSurname; }
+            if (!updatedEmail) { updatedEmail = currentEmail; }
 
             let updatedUser = {
               name: updatedName,
@@ -76,7 +87,7 @@ $(document).ready(function() {
 
             $.ajax({
               url: `${defaultUrl}/users/${userId}`,
-              method: 'PATCH',
+              method: 'PUT',
               data: updatedUser,
               success: function(response) {
                 console.log('User updated:', response);
@@ -107,6 +118,8 @@ $(document).ready(function() {
             });
           });
 
+
+
           actions.append(updateButton);
           actions.append(deleteButton);
           row.append(actions);
@@ -119,8 +132,8 @@ $(document).ready(function() {
           let id = $(this).closest('tr').data('id');
 
           $.ajax({
-            url: `${defaultUrl}/users/${id}`,
-            method: 'PATCH',
+            url: `${defaultUrl}/users/${city}/${id}`,
+            method: 'PUT',
             data: { city: city },
             success: function(data) {
               alert('User updated');
@@ -152,6 +165,7 @@ $(document).ready(function() {
           row.append('<td>' + user.name + '</td>');
           row.append('<td>' + user.surname + '</td>');
           row.append('<td>' + user.country + '</td>');
+          row.append('<td>' + user.city + '</td>');
 
           let citySelect = $('<select>').addClass('city-select');
           let cities = ["Astana", "Shymkent", "Almata", "Taraz", "Aktobe", "Atyrau", "Kostanai"];
@@ -205,7 +219,7 @@ $(document).ready(function() {
 
             $.ajax({
               url: `${defaultUrl}/users/${userId}`,
-              method: 'PATCH',
+              method: 'PUT',
               data: updatedUser,
               success: function(response) {
                 console.log('User updated:', response);
@@ -249,7 +263,7 @@ $(document).ready(function() {
 
           $.ajax({
             url: `${defaultUrl}/users/${id}`,
-            method: 'PATCH',
+            method: 'PUT',
             data: { city: city },
             success: function(data) {
               alert('User updated');
@@ -289,6 +303,20 @@ $(document).ready(function() {
     });
   }
 
+  function createUser(user) {
+    $.ajax({
+      url: `${defaultUrl}/users`,
+      method: 'POST',
+      data: user,
+      success: function(response) {
+        console.log('User created:', response);
+      },
+      error: function(error) {
+        console.log('Error creating user:', error);
+      }
+    });
+  }
+
   function updateUser(id, updatedName, updatedSurname, updatedEmail) {
     let updatedUser = {
       name: updatedName || '',
@@ -298,7 +326,7 @@ $(document).ready(function() {
 
     $.ajax({
       url: `${defaultUrl}/users/${id}`,
-      method: 'PATCH',
+      method: 'PUT',
       data: updatedUser,
       success: function(response) {
         console.log('User updated successfully:', response);
@@ -309,8 +337,8 @@ $(document).ready(function() {
     });
   }
 
-  function deleteUser(id) {
-    $.ajax({
+  async function deleteUser(id) {
+    await $.ajax({
       url: `${defaultUrl}/users/${id}`,
       method: 'DELETE',
       success: function(response) {
@@ -393,7 +421,7 @@ $(document).ready(function() {
 
             $.ajax({
               url: `${defaultUrl}/users/${userId}`,
-              method: 'PATCH',
+              method: 'PUT',
               data: updatedUser,
               success: function(response) {
                 console.log('User updated:', response);
@@ -435,8 +463,8 @@ $(document).ready(function() {
           let id = $(this).closest('tr').data('id');
 
           $.ajax({
-            url: `${defaultUrl}/users/${id}`,
-            method: 'PATCH',
+            url: `${defaultUrl}/users/${city}/${id}`,
+            method: 'PUT',
             data: { city: city },
             success: function(data) {
               alert('User updated');

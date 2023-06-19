@@ -1,10 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put } from "@nestjs/common";
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Users } from "../entity/users.entity";
 import { FilterDto } from "./dto/filter.dto";
-import { DeleteResult } from "typeorm";
 import { GroupsService } from "../groups/groups.service";
 
 @Controller('users')
@@ -35,12 +34,12 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
 
-  @Patch(':city/:id')
+  @Put(':city/:id')
   createCity(@Param('id') id: number, @Param('city') city: string, ) {
     return this.usersService.createCity(city, id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto): Promise<Users> {
     return this.usersService.update(+id, updateUserDto);
   }
