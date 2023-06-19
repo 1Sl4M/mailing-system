@@ -74,18 +74,12 @@ export class UsersService {
     return users;
   }
 
-
   async findAll(): Promise<Users[]> {
-    const users = await this.usersRepository.find();
-
     const query = `
     select * from users order by id
     `;
 
-    await this.usersRepository.query(query);
-    await this.usersRepository.save(users);
-
-    return users;
+    return this.usersRepository.query(query);
   }
 
   findOne(id: number): Promise<Users>  {
