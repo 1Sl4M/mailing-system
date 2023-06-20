@@ -10,17 +10,17 @@ export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.groupsService.findById(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDto) {
-    return this.groupsService.update(+id, updateGroupDto);
+  update(@Param('id') id: number, @Body() updateGroupDto: UpdateGroupDto) {
+    return this.groupsService.update(id, updateGroupDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.groupsService.remove(+id);
   }
 

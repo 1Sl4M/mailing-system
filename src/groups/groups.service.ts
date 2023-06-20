@@ -30,7 +30,14 @@ export class GroupsService {
         users: usersInGroup,
       });
     }
+
+    const query = `
+    select * from groups order by id
+    `;
+    await this.groupsRepository.query(query);
+
     return results;
+
   }
 
   findById(id: number) {
@@ -46,6 +53,8 @@ export class GroupsService {
 
     group.title = updateGroupDto.title;
     group.description = updateGroupDto.description;
+
+    await this.groupsRepository.save(group);
 
     return group;
   }

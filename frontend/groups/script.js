@@ -36,6 +36,15 @@ $(document).ready(function() {
 
         $('#groupsTable tbody').append(row);
       });
+      $(document).on('click', '.editGroupBtn', function() {
+        let groupId = $(this).data('group-id');
+
+        let updatedTitle = prompt('Input new title:');
+        let updatedDescription = prompt('Input new description:');
+
+        editGroup(groupId, updatedTitle, updatedDescription);
+      });
+
     });
   }
 
@@ -130,6 +139,26 @@ $(document).ready(function() {
     });
   }
 
+  function editGroup(groupId, updatedTitle, updatedDescription) {
+    console.log(updatedTitle, updatedDescription);
+    let updatedGroup = {
+      title: updatedTitle || '',
+      description: updatedDescription || ''
+    };
+
+    $.ajax({
+      url: `${defaultUrl}/groups/${groupId}`,
+      type: 'PATCH',
+      data: updatedGroup,
+      success: function() {
+        location.reload();
+      },
+      error: function() {
+        console.log('Error updating group');
+      }
+    });
+  }
+
   $('#addUserForm').submit(function(event) {
     let groupId = $('#addUserForm input[name="groupId"]').val();
     let userId = $('#addUserForm input[name="userId"]').val();
@@ -153,36 +182,4 @@ $(document).ready(function() {
       }
     });
   });
-
-  function updateGroupsTable() {
-    $.get(`${defaultUrl}/groups`, function(groups) {
-      $('#groupsTable tbody').empty();
-
-      groups.forEach(function(group) {
-        let usersList = group.users.map(user => `<li>${user.id}: ${user.name} (${user.email})</li>`).join('');
-
-        let row = `<tr>
-                    <td>${group.id}</td>
-                    <td>${group.title}</td>
-                    <td>${group.description}</td>
-                    <td>
-                      <ul>${usersList}</ul>
-                    </td>
-                    <td>
-                      <button class="deleteGroupBtn" data-group-id="${group.id}">Delete Group</button>
-                    </td>
-                    <td>
-                      <button class="editGroupBtn" data-group-id="${group.id}">Edit</button>
-                    </td>
-                    <td>
-                      <button class="addUserBtn" data-group-id="${group.id}" data-toggle="modal" data-target="#addUserModal">Add User</button>
-                    </td>
-                 </tr>`;
-
-        $('#groupsTable tbody').append(row);
-      });
-    });
-  }
-
-  // ... остальной код обработчиков событий и функций ...
 });
