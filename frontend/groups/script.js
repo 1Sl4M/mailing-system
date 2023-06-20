@@ -87,13 +87,15 @@ $(document).ready(function() {
 
     $.get(`${defaultUrl}/groups?search=${query}`, function(groups) {
       groups.forEach(function(group) {
-        let filteredUsers = group.users.filter(user => {
+        let filteredUsers = group.users.filter(function(user) {
           return user.name.includes(query) ||
             user.email.includes(query) ||
-            user.id.toString() === query;
+            user.id.toString() === query && user.id !== userId;
         });
 
-        let usersList = filteredUsers.map(user => `<li>${user.id}: ${user.name} (${user.email})</li>`).join('');
+        let usersList = filteredUsers.map(function(user) {
+          return `<li>${user.id}: ${user.name} (${user.email})</li>`;
+        }).join('');
 
         let row = `<tr>
                     <td>${group.id}</td>

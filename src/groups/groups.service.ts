@@ -193,31 +193,11 @@ export class GroupsService {
   }
 
   async removeUserFromGroup(groupId: number, userId: number) {
-    const group = await this.groupsRepository.findOneBy({ id: groupId });
+    const query = `
+    delete from users_and_groups
+    where group_id = ${groupId} and user_id = ${userId}
+    `;
 
-    if (!group) {
-      throw new NotFoundException('Group not found');
-    }
-
-    const user = await this.usersRepository
-      .createQueryBuilder("user")
-      .leftJoinAndSelect("user.groups", "groups")
-      .where("user.id = :userId", { userId })
-      .getOne();
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    console.log(groupId, '   ' ,userId);
-
-    if (!user.groups) {
-      user.groups = [];
-    }
-
-    user.groups.pop();
-
-    await this.usersRepository.save(user);
-    await this.groupsRepository.save(group);
+    await this.groupsRepository.query(query);
   }
 }
