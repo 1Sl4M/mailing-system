@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { IsAlpha, MaxLength } from "class-validator";
 import { Users } from "./users.entity";
 import { Spam } from "./spam.entity";
@@ -20,7 +20,7 @@ export class SentUsers {
   @JoinColumn({ name: 'user_id' })
   users: Users;
 
-  @OneToOne(() => Spam, spam => spam.id)
+  @OneToMany(() => Spam, spam => spam.id)
   @JoinColumn({ name: 'spam_id' })
-  spam: Spam;
+  spam: Spam[];
 }

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { InjectRepository } from "@nestjs/typeorm";
 import { Groups } from "../entity/groups.entity";
-import { FindOneOptions, Repository } from "typeorm";
+import { FindOneOptions, getConnection, Repository } from "typeorm";
 import { Users } from "../entity/users.entity";
 import { CreateGroupDto } from "./dto/create-group.dto";
 import { FilterDto } from "../users/dto/filter.dto";
@@ -57,8 +57,55 @@ export class GroupsService {
       throw new NotFoundException('Group not found');
     }
 
-    await this.groupsRepository.delete(id);
+    const query = `
+    delete from users_and_groups
+    where group_id = ${id}
+  `;
+    const query1 = `
+    delete from spam
+    where group_id = ${id}
+  `;
+
+    const query2 = `
+    delete from sent_users
+    where spam_id in (
+      select id
+      from spam
+      where group_id = ${id}
+    )
+  `;
+
+    await this.groupsRepository.query(query2);
+    await this.groupsRepository.query(query1);
+    await this.groupsRepository.query(query);
+    await this.groupsRepository.remove(group);
   }
+  //
+  // async remove(groupId: number): Promise<void> {
+  //   const queryRunner = this.connection.createQueryRunner();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
+  //
+  //   try {
+  //     const group = await this.groupsRepository.findOneBy({ id: groupId });
+  //     if (!group) {
+  //       throw new NotFoundException('Group not found');
+  //     }
+  //
+  //     await queryRunner.query(`DELETE FROM sent_users WHERE spam_id IN (SELECT id FROM spam WHERE group_id = ${groupId})`);
+  //
+  //     await queryRunner.query(`DELETE FROM spam WHERE group_id = ${groupId}`);
+  //
+  //     await this.groupsRepository.remove(group);
+  //
+  //     await queryRunner.commitTransaction();
+  //   } catch (error) {
+  //     await queryRunner.rollbackTransaction();
+  //     throw error;
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
+  // }
 
   async createGroup(dto: CreateGroupDto) {
     return await this.groupsRepository.save(dto);
@@ -71,13 +118,17 @@ export class GroupsService {
 
     let groups = await this.findAll();
 
-    if(search) {
+    if (search) {
       groups = groups.filter(group =>
-        group.id.toString().includes(search) ||
-        group.title.includes(search) ||
-        group.description.includes(search)
+        (group.id && group.id.toString().includes(search)) ||
+        (group.title && group.title.includes(search)) ||
+        (group.description && group.description.includes(search)) ||
+        group.users.some(user => user.id && user.id.toString().includes(search)) ||
+        group.users.some(user => user.name && user.name.includes(search)) ||
+        group.users.some(user => user.email && user.email.includes(search))
       );
     }
+
 
     return groups;
   }
@@ -191,6 +242,6 @@ export class GroupsService {
     user.groups.pop();
 
     await this.usersRepository.save(user);
-    //Тут было возвращение getUsersFromGroup
+    await this.groupsRepository.save(group);
   }
 }
