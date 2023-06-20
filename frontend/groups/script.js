@@ -139,6 +139,19 @@ $(document).ready(function() {
     });
   });
 
+  $(document).on('click', '.deleteUserBtn', function() {
+    let groupId = $(this).data('group-id');
+    let userId = $(this).data('user-id');
+
+    $.ajax({
+      url: `${defaultUrl}/groups/${groupId}/users/${userId}`,
+      type: 'DELETE',
+      success: function() {
+        location.reload();
+      }
+    });
+  });
+
   function updateGroupsTable() {
     $.get(`${defaultUrl}/groups`, function(groups) {
       $('#groupsTable tbody').empty();
