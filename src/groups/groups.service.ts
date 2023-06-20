@@ -17,8 +17,20 @@ export class GroupsService {
   ) {
   }
 
-  findAll() {
-    return this.groupsRepository.find();
+  async findAll() {
+    const groups = await this.groupsRepository.find();
+
+    const results = [];
+    for (const group of groups) {
+      const usersInGroup = await this.getUsersInGroup(group.id);
+      results.push({
+        title: group.title,
+        id: group.id,
+        description: group.description,
+        users: usersInGroup,
+      });
+    }
+    return results;
   }
 
   findById(id: number) {
@@ -99,7 +111,7 @@ export class GroupsService {
     await this.usersRepository.save(user);
   }
 
-  async getUsersInGroup(groupId: number): Promise<{ title: string, id: number, description: string, users: Users[] }[]> {
+  async getUsersInGroup(groupId: number): Promise<Users[]> {
     const optionsGroup: FindOneOptions<Groups> = {
       where: { id: groupId },
     };
@@ -118,12 +130,10 @@ export class GroupsService {
     const userIds = usersInGroup.map(user => user.user_id);
     const users = await this.usersRepository.findByIds(userIds);
 
-    return [{
-      title: group.title,
-      id: group.id,
-      description: group.description,
-      users: users,
-    }];
+    return users
+      // title: group.title,
+      // id: group.id,
+      // description: group.description,
   }
 
   async removeUserFromAllGroups(userId: number): Promise<{ msg: string }> {
@@ -157,7 +167,7 @@ export class GroupsService {
     };
   }
 
-  async removeUserFromGroup(groupId: number, userId: number): Promise<{ title: string; id: number; description: string; users: Users[] }[]> {
+  async removeUserFromGroup(groupId: number, userId: number) {
     const group = await this.groupsRepository.findOneBy({ id: groupId });
 
     if (!group) {
@@ -181,6 +191,6 @@ export class GroupsService {
     user.groups.pop();
 
     await this.usersRepository.save(user);
-    return await this.getUsersInGroup(groupId);
+    //Тут было возвращение getUsersFromGroup
   }
 }

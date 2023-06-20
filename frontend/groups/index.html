@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Groups</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="script.js"></script>
+</head>
+<body>
+<h1>Groups management</h1>
+
+<form id="searchForm">
+  <input type="text" name="search" placeholder="Search...">
+  <button type="submit">Search</button>
+</form>
+
+<table id="groupsTable">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Users</th>
+    <th></th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<div id="editGroupModal" style="display: none;">
+  <form id="editGroupForm">
+    <input type="hidden" name="groupId">
+    <label>Name:</label>
+    <input type="text" name="title">
+    <label>Description:</label>
+    <input type="text" name="description">
+    <button type="submit">Save</button>
+  </form>
+</div>
+
+<!-- Модальное окно добавления группы -->
+<div id="addGroupModal" style="display: none;">
+  <form id="addGroupForm">
+    <label>Name:</label>
+    <input type="text" name="title">
+    <label>Description:</label>
+    <input type="text" name="description">
+    <button type="submit">Add</button>
+  </form>
+</div>
+</body>
+</html>
