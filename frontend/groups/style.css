@@ -82,3 +82,36 @@ td {
 .userList .deleteUserBtn {
     margin-left: 10px;
 }
+
+.createGroupButton {
+    position: relative;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.createGroupButton::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #ccc;
+}
+
+.createGroupButton .line{
+    display: none;
+}
+
+.createGroupButton button {
+    position: relative;
+    z-index: 1;
+}
+
+.createGroupButton button {
+    margin: 25px 25px 20px 15px;
+}
+.createEmailBtn  button{
+    margin-left: 615px;
+    margin-bottom: 20px;
+}

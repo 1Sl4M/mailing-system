@@ -11,8 +11,7 @@ export class LetterService {
   ) {}
 
   async getLetterFromDatabase(id: number): Promise<Letters> {
-    const options: FindOneOptions<Letters> = { where: { id } };
-    return await this.letterRepository.findOne(options);
+    return await this.letterRepository.findOneBy({ id });
   }
 
   async createLetter(dto: CreateLetterDto):Promise<Letters> {
@@ -22,5 +21,9 @@ export class LetterService {
     letter.content = content;
 
     return await this.letterRepository.save(letter);
+  }
+
+  async getAllLetters(): Promise<Letters[]> {
+    return this.letterRepository.find();
   }
 }

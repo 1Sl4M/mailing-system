@@ -1,7 +1,7 @@
 import {
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, JoinColumn,
   JoinTable,
   ManyToMany, OneToMany,
   OneToOne,
@@ -52,6 +52,7 @@ export class Users {
   })
   groups: Groups[];
 
-  @OneToMany(() => SentUsers, sentUsers => sentUsers.user_id)
+  @OneToMany(() => SentUsers, sentUsers => sentUsers.users)
+  @JoinColumn({ name: 'user_id' })
   sentUsers: SentUsers[];
 }

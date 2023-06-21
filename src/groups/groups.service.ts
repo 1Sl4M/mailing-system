@@ -116,6 +116,15 @@ export class GroupsService {
     return groups;
   }
 
+  // async sortGroup(): Promise<Groups[]> {
+  //   const query =
+  //     `
+  //     select * from groups order by id
+  //     `;
+  //
+  //   return this.groupsRepository.query(query);
+  // }
+
   async addUserToGroup(groupId: number, userId: number): Promise<void> {
     const optionsGroup: FindOneOptions<Groups> = {
       where: { id: groupId },

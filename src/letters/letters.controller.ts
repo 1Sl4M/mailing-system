@@ -46,6 +46,11 @@ export class LettersController {
     }
   }
 
+  @Get()
+  async getAllLetters() {
+    return this.letterService.getAllLetters();
+  }
+
   @Get('send-email/:id/:groupId')
   async sendMailToGroupMembers(@Param('groupId') groupId: number, @Param('id') id: number) {
     const letter = await this.letterService.getLetterFromDatabase(id);

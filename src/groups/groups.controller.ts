@@ -38,6 +38,11 @@ export class GroupsController {
     return this.groupsService.findAll();
   }
 
+  // @Get('/sort')
+  // sortGroup() {
+  //   return this.groupsService.sortGroup();
+  // }
+
   @Post(':groupId/users/:userId')
   addUserToGroup(@Param('groupId') groupId: number, @Param('userId') userId: number) {
     return this.groupsService.addUserToGroup(groupId, userId);

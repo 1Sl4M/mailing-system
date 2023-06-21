@@ -16,7 +16,7 @@ export class SentUsers {
   @MaxLength(1)
   status_code: string;
 
-  @ManyToOne(() => Users, users => users.id)
+  @ManyToOne(() => Users, user => user.id)
   @JoinColumn({ name: 'user_id' })
   users: Users;
 
