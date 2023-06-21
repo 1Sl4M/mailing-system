@@ -16,6 +16,7 @@ import { CreateLetterDto } from "./dto/create-letter.dto";
 import { Spam } from "../entity/spam.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { Letters } from "../entity/letters.entity";
 
 @Controller('letters')
 export class LettersController {
@@ -23,8 +24,14 @@ export class LettersController {
     @Inject(MailService) private readonly mailService: MailService,
     private readonly letterService: LetterService,
     @Inject(UsersService) private readonly usersService: UsersService,
-    @InjectRepository(Spam) private readonly spamRepository: Repository<Spam>
+    @InjectRepository(Spam) private readonly spamRepository: Repository<Spam>,
+    @InjectRepository(Letters) private readonly letterRepository: Repository<Letters>
   ) {}
+
+  @Get()
+  async getAllLetters() {
+    return this.letterRepository.find();
+  }
 
   @Get('send-email/:id')
   async sendEmail(@Param('id') id: number, @Query('email') email: string) {
@@ -45,14 +52,13 @@ export class LettersController {
     }
   }
 
-  @Get(':letterId')
-  async findLetterById(@Param('letterId') letterId: number) {
-    return this.letterService.findLetterById(letterId);
+  @Get('spam')
+  async getAllSpams() {
+    return this.letterService.getAllSpam();
   }
-
-  @Get()
-  async getAllLetters() {
-    return this.letterService.getAllLetters();
+  @Get(':letterId')
+  async findLetters(@Param('letterId') letterId: number) {
+    return this.letterService.findLetters(letterId);
   }
 
   @Get('send-email/:id/:groupId')

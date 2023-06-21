@@ -40,8 +40,15 @@ export class GroupsService {
 
   }
 
-  findById(id: number) {
-    return this.groupsRepository.findOneBy({ id });
+  async getGroups(groupId: number) {
+    const query = `
+    select groups.id, groups.title, groups.description from spam
+    join groups on groups.id = ${groupId}
+    where ${groupId} = groups.id
+    group by groups.id, groups.title, groups.description
+    `;
+
+    return this.groupsRepository.query(query);
   }
 
   async update(id: number, updateGroupDto: UpdateGroupDto): Promise<Groups> {

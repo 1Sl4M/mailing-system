@@ -12,8 +12,15 @@ export class LetterService {
     @InjectRepository(Spam) private readonly spamRepository: Repository<Spam>,
   ) {}
 
-  async findLetterById(letterId: number) {
-    return this.letterRepository.findOneBy({ id: letterId })
+  async findLetters(letterId: number) {
+    const query = `
+    select letters.id, letters.theme, letters.content from spam
+    join letters on letters.id = ${letterId}
+    where letters.id = ${letterId}
+    group by letters.id, letters.theme, letters.content
+    `;
+
+    return this.letterRepository.query(query);
   }
 
   async getLetterFromDatabase(id: number): Promise<Letters> {
@@ -29,7 +36,7 @@ export class LetterService {
     return await this.letterRepository.save(letter);
   }
 
-  async getAllLetters(): Promise<Letters[]> {
-    return this.letterRepository.find();
+  async getAllSpam(): Promise<Spam[]> {
+    return this.spamRepository.find();
   }
 }

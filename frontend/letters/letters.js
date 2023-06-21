@@ -1,18 +1,46 @@
 const defaultUrl = 'http://localhost:3000';
 
-function loadLetter(letterId) {
+function loadSpam() {
   $.ajax({
-    url: `${defaultUrl}/letters/${letterId}`,
+    url: `${defaultUrl}/letters/spam`,
     type: 'GET',
-    dataType: 'json',
-    success: function(letter) {
-      $('#lettersTable tbody').empty();
+    success: function(spam) {
+      spam.forEach(function(item) {
+        $.ajax({
+          url: `${defaultUrl}/letters/${item.letter_id}`,
+          type: 'GET',
+          success: function(letters) {
+            letters.forEach(function(letter) {
+              let row = $('<tr></tr>');
+              row.append('<td>' + letter.id + '</td>');
+              row.append('<td>' + letter.theme + '</td>');
+              row.append('<td>' + letter.content + '</td>');
 
-      let row = $('<tr></tr>');
-      row.append('<td>' + letter.id + '</td>');
-      row.append('<td>' + letter.theme + '</td>');
-      row.append('<td>' + letter.content + '</td>');
-      $('#lettersTable tbody').append(row);
+              $.ajax({
+                url: `${defaultUrl}/groups/${item.group_id}`,
+                type: 'GET',
+                success: function(groups) {
+                  let groupCell = $('<td></td>');
+                  groups.forEach(function(group) {
+                    let groupInfo = 'ID: ' + group.id + '<br>Title: ' + group.title + '<br>Description: ' + group.description;
+                    groupCell.append(groupInfo + '<br><br>'); // Добавляем информацию о группе с использованием тега <br> для разделения строк
+                  });
+
+                  row.append(groupCell);
+                  row.append('<td></td>'); // Создаем пустую ячейку для столбца "Users"
+                  $('#lettersTable tbody').append(row);
+                },
+                error: function(xhr, status, error) {
+                  console.error(error);
+                }
+              });
+            });
+          },
+          error: function(xhr, status, error) {
+            console.error(error);
+          }
+        });
+      });
     },
     error: function(xhr, status, error) {
       console.error(error);
@@ -20,19 +48,4 @@ function loadLetter(letterId) {
   });
 }
 
-// Пример вызова функции для получения письма с идентификатором 1
-loadLetter(1);
-
-function getGroupsString(group) {
-  let groups = group.map(function(item) {
-    return item.group.title;
-  });
-  return groups.join(', ');
-}
-
-function getUsersString(sentUsers) {
-  let users = sentUsers.map(function(item) {
-    return item.users.name + ' ' + item.users.surname;
-  });
-  return users.join(', ');
-}
+loadSpam();

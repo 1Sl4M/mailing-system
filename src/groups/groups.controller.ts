@@ -18,6 +18,11 @@ export class GroupsController {
     return this.groupsService.update(id, updateGroupDto);
   }
 
+  @Get(':groupId')
+  getGroups(@Param('groupId') groupId: number) {
+    return this.groupsService.getGroups(groupId);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.groupsService.remove(+id);

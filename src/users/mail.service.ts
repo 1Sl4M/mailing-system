@@ -51,6 +51,15 @@ export class MailService {
 
       await this.sentUsersRepository.save(sentUser);
       await this.sendMail(user.email, subject, text);
+      // try {
+      //   const query =`
+      //
+      //   `;
+      //   await this.sendMail(user.email, subject, text);
+      //   await this.sentUsersRepository.query()
+      // } catch (e) {
+      //
+      // }
     }
   }
 }
