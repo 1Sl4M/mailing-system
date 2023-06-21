@@ -52,11 +52,6 @@ export class GroupsController {
     return this.groupsService.getUsersInGroup(id);
   }
 
-  // @Get(':groupId/:letterId')
-  // async getSpamGroup(@Param('groupId') groupId: number, @Param('letterId') letterId: number) {
-  //   return this.groupsService.getSpamGroup(groupId, letterId);
-  // }
-
   @Delete(':groupId/users/:userId')
   removeUserFromGroup(@Param('groupId') groupId: number, @Param('userId') userId: number) {
     return this.groupsService.removeUserFromGroup(groupId, userId);

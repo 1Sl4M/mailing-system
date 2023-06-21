@@ -123,26 +123,6 @@ export class GroupsService {
     return groups;
   }
 
-  // async getSpamGroup(groupId: number, letterId: number): Promise<Groups> {
-  //   const query = `
-  //   select spam.id, group_id, letter_id from spam
-  //   join groups on ${groupId} = spam.group_id
-  //   join letters on ${letterId} = spam.letter_id
-  //   where group_id = ${groupId} and letter_id = ${letterId}
-  //   `;
-  //
-  //   return this.groupsRepository.query(query);
-  // }
-
-  // async sortGroup(): Promise<Groups[]> {
-  //   const query =
-  //     `
-  //     select * from groups order by id
-  //     `;
-  //
-  //   return this.groupsRepository.query(query);
-  // }
-
   async addUserToGroup(groupId: number, userId: number): Promise<void> {
     const optionsGroup: FindOneOptions<Groups> = {
       where: { id: groupId },
