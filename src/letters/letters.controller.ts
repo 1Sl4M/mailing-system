@@ -13,7 +13,6 @@ import { MailService } from "../users/mail.service";
 import { LetterService } from "./letter.service";
 import { UsersService } from "../users/users.service";
 import { CreateLetterDto } from "./dto/create-letter.dto";
-import { Letters } from "../entity/letters.entity";
 import { Spam } from "../entity/spam.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -44,6 +43,11 @@ export class LettersController {
     } catch (error) {
       return 'Ошибка при отправке письма: ' + error.message;
     }
+  }
+
+  @Get(':letterId')
+  async findLetterById(@Param('letterId') letterId: number) {
+    return this.letterService.findLetterById(letterId);
   }
 
   @Get()

@@ -3,12 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from "typeorm";
 import { Letters } from '../entity/letters.entity';
 import { CreateLetterDto } from "./dto/create-letter.dto";
+import { Spam } from "../entity/spam.entity";
 
 @Injectable()
 export class LetterService {
   constructor(
     @InjectRepository(Letters) private readonly letterRepository: Repository<Letters>,
+    @InjectRepository(Spam) private readonly spamRepository: Repository<Spam>,
   ) {}
+
+  async findLetterById(letterId: number) {
+    return this.letterRepository.findOneBy({ id: letterId })
+  }
 
   async getLetterFromDatabase(id: number): Promise<Letters> {
     return await this.letterRepository.findOneBy({ id });

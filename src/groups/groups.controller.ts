@@ -9,11 +9,10 @@ import { Groups } from "../entity/groups.entity";
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.groupsService.findById(+id);
+  @Post()
+  createGroup(@Body() createGroupDto: CreateGroupDto) {
+    return this.groupsService.createGroup(createGroupDto);
   }
-
   @Patch(':id')
   update(@Param('id') id: number, @Body() updateGroupDto: UpdateGroupDto) {
     return this.groupsService.update(id, updateGroupDto);
@@ -22,11 +21,6 @@ export class GroupsController {
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.groupsService.remove(+id);
-  }
-
-  @Post()
-  createGroup(@Body() createGroupDto: CreateGroupDto) {
-    return this.groupsService.createGroup(createGroupDto);
   }
 
   @Get()
@@ -52,6 +46,11 @@ export class GroupsController {
   getUsersInGroup(@Param('id') id: number) {
     return this.groupsService.getUsersInGroup(id);
   }
+
+  // @Get(':groupId/:letterId')
+  // async getSpamGroup(@Param('groupId') groupId: number, @Param('letterId') letterId: number) {
+  //   return this.groupsService.getSpamGroup(groupId, letterId);
+  // }
 
   @Delete(':groupId/users/:userId')
   removeUserFromGroup(@Param('groupId') groupId: number, @Param('userId') userId: number) {
