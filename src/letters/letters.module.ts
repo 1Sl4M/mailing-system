@@ -11,11 +11,13 @@ import { GroupsService } from "../groups/groups.service";
 import { ConfigModule } from "@nestjs/config";
 import { Spam } from "../entity/spam.entity";
 import { SentUsers } from "../entity/sent_users.entity";
+import { Country } from "../entity/country.entity";
+import { City } from "../entity/city.entity";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([Users, Letters, Groups, Spam, SentUsers])
+    TypeOrmModule.forFeature([Users, Letters, Groups, Spam, SentUsers, Country, City])
   ],
   controllers: [LettersController],
   providers: [LetterService, MailService, UsersService, GroupsService]

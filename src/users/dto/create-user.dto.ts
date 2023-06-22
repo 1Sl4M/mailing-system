@@ -15,7 +15,5 @@ export class CreateUserDto {
 
   @IsEmail()
   email: string;
-
-  country_id: number;
 }
 

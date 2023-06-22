@@ -7,12 +7,14 @@ import { FindOneOptions, Repository } from "typeorm";
 import { FilterDto } from "./dto/filter.dto";
 import { Groups } from "../entity/groups.entity";
 import { GroupsService } from "../groups/groups.service";
+import { Country } from "../entity/country.entity";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(Users) private readonly usersRepository: Repository<Users>,
     @InjectRepository(Groups) private readonly groupsRepository: Repository<Groups>,
+    @InjectRepository(Country) private readonly countryRepository: Repository<Country>,
     private readonly groupsService: GroupsService
   ) {}
 
@@ -26,32 +28,8 @@ export class UsersService {
       user.surname = dto.surname;
       user.otchestvo = dto.otchestvo;
       user.email = dto.email;
-      //user.country_id = dto.country_id;
 
       return this.usersRepository.save(user);
-    }
-  }
-
-  async createCity(city: string, id: number) {
-    const user = await this.usersRepository.findOneBy({ id: id });
-
-    if(user.city) {
-      const query = `
-      update users
-      set city = $1
-      where id = $2
-      `;
-
-      await this.usersRepository.query(query, [city, id]);
-
-      return;
-    }
-    user.city = city;
-
-    await this.usersRepository.save(user);
-
-    return {
-      msg: 'User updated successfully'
     }
   }
 
@@ -74,21 +52,23 @@ export class UsersService {
     return users;
   }
 
-  async findAll(): Promise<Users[]> {
+  async findAll():Promise<Users[]> {
     const query = `
-    SELECT users.id, users.name, users.surname, users.email, countries.country_name, cities.city_name
-    FROM users
-    JOIN countries ON countries.country_id = users.country_id
-    JOIN cities ON cities.country_id = countries.country_id 
-    GROUP BY users.id, users.name, users.email, countries.country_name, cities.city_name
-    order by users.id;
+    select * from users order by id
     `;
 
     return this.usersRepository.query(query);
   }
 
-  findOne(id: number): Promise<Users>  {
-    return this.usersRepository.findOneBy({id});
+  async getCountries() {
+    const query = `
+    SELECT countries.country_name, cities.city_name FROM users
+    join countries on countries.country_id = users.country_id
+    JOIN cities ON cities.country_id = countries.country_id
+    GROUP BY countries.country_name, cities.city_name
+    `;
+
+    return this.usersRepository.query(query);
   }
 
   async findByEmail(email: string): Promise<Users> {
@@ -139,7 +119,7 @@ export class UsersService {
   }
 
   async getGroupInUsers(userId: number): Promise<{ name: string; groups: string; email: string }> {
-
+    console.log('zdec');
     const user = await this.usersRepository.findOneBy({ id: userId });
     if (!user) {
       throw new NotFoundException('User not found');

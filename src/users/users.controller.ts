@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, Delete, Query, Put } from "@nestjs/common";
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -10,7 +10,7 @@ import { GroupsService } from "../groups/groups.service";
 export class UsersController {
   constructor(private readonly usersService: UsersService, private readonly groupsService: GroupsService) {}
 
-  @Get()
+  @Get('filter')
   getUsers(@Query() dto: FilterDto): Promise<Users[]> {
     if(Object.keys(dto).length) {
       return this.usersService.getUsersWithFilters(dto);
@@ -29,14 +29,9 @@ export class UsersController {
     return this.usersService.getGroupInUsers(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number): Promise<Users> {
-    return this.usersService.findOne(+id);
-  }
-
-  @Put(':city/:id')
-  createCity(@Param('id') id: number, @Param('city') city: string, ) {
-    return this.usersService.createCity(city, id);
+  @Get()
+  getCountries() {
+    return this.usersService.getCountries();
   }
 
   @Put(':id')
