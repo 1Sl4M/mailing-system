@@ -31,9 +31,10 @@ function loadSpam() {
                   row.append(groupCell);
 
                   $.ajax({
-                    url: `${defaultUrl}/groups/users/${item.group_id}`,
+                    url: `${defaultUrl}/groups/statusCode/${item.group_id}`,
                     type: 'GET',
                     success: function(users) {
+                      console.log(item.group_id);
                       let usersCell = $('<td></td>');
                       let usersList = $('<ul></ul>');
 
@@ -41,7 +42,8 @@ function loadSpam() {
                         let userItem = $('<li></li>');
                         userItem.append('ID: ' + user.id + '<br>');
                         userItem.append('Name: ' + user.name + '<br>');
-                        userItem.append('Email: ' + user.email + '<br><br>');
+                        userItem.append('Email: ' + user.email + '<br>');
+                        userItem.append('Status code: ' + user.status_code + '<br><br>');
 
                         usersList.append(userItem);
                       });

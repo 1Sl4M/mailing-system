@@ -26,7 +26,7 @@ export class UsersService {
       user.surname = dto.surname;
       user.otchestvo = dto.otchestvo;
       user.email = dto.email;
-      user.country = dto.country;
+      //user.country_id = dto.country_id;
 
       return this.usersRepository.save(user);
     }
@@ -66,8 +66,8 @@ export class UsersService {
         (user.name && user.name.includes(search)) ||
         (user.surname && user.surname.includes(search)) ||
         (user.otchestvo && user.otchestvo.includes(search)) ||
-        (user.email && user.email.includes(search)) ||
-        (user.country && user.country.includes(search))
+        (user.email && user.email.includes(search))
+        //(user.country && user.country.includes(search))
       );
     }
 
@@ -76,7 +76,12 @@ export class UsersService {
 
   async findAll(): Promise<Users[]> {
     const query = `
-    select * from users order by id
+    SELECT users.id, users.name, users.surname, users.email, countries.country_name, cities.city_name
+    FROM users
+    JOIN countries ON countries.country_id = users.country_id
+    JOIN cities ON cities.country_id = countries.country_id 
+    GROUP BY users.id, users.name, users.email, countries.country_name, cities.city_name
+    order by users.id;
     `;
 
     return this.usersRepository.query(query);

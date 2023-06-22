@@ -37,10 +37,10 @@ export class GroupsController {
     return this.groupsService.findAll();
   }
 
-  // @Get('/sort')
-  // sortGroup() {
-  //   return this.groupsService.sortGroup();
-  // }
+  @Get('statusCode/:groupId')
+  getUsersStatusCode(@Param('groupId') groupId: number) {
+    return this.groupsService.getUsersStatusCode(groupId);
+  }
 
   @Post(':groupId/users/:userId')
   addUserToGroup(@Param('groupId') groupId: number, @Param('userId') userId: number) {

@@ -152,6 +152,18 @@ export class GroupsService {
     await this.usersRepository.save(user);
   }
 
+  async getUsersStatusCode(groupId: number) {
+    const query = `
+    select users.id, users.name, users.email, sent_users.status_code from sent_users
+    join spam on spam.id = sent_users.spam_id
+    join users on users.id = sent_users.user_id
+    join users_and_groups on users_and_groups.user_id = users.id
+    where users_and_groups.group_id = ${groupId}
+    `;
+
+    return this.usersRepository.query(query);
+  }
+
   async getUsersInGroup(groupId: number): Promise<Users[]> {
     const optionsGroup: FindOneOptions<Groups> = {
       where: { id: groupId },

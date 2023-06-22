@@ -3,13 +3,14 @@ import {
   CreateDateColumn,
   Entity, JoinColumn,
   JoinTable,
-  ManyToMany, OneToMany,
+  ManyToMany, ManyToOne, OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Unique
 } from "typeorm";
 import { Groups } from "./groups.entity";
 import { SentUsers } from "./sent_users.entity";
+import { Country } from "./country.entity";
 
 @Entity({ name: 'users' })
 export class Users {
@@ -23,13 +24,16 @@ export class Users {
   surname: string;
 
   @Column()
+  country_id: number;
+
+  @Column()
   otchestvo: string;
 
   @Column()
   email: string;
 
-  @Column()
-  country: string;
+  @ManyToOne(() => Country, country => country.users)
+  country: Country;
 
   @Column()
   city: string;

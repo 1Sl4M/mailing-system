@@ -31,7 +31,8 @@ $(document).ready(function() {
       url: `${defaultUrl}/users`,
       method: 'GET',
       success: function(response) {
-        var tbody = $('#user-table tbody');
+        let tbody = $('#user-table tbody');
+
         tbody.empty();
 
         response.forEach(function(user) {
@@ -39,10 +40,22 @@ $(document).ready(function() {
           row.append('<td>' + user.id + '</td>');
           row.append('<td>' + user.name + '</td>');
           row.append('<td>' + user.surname + '</td>');
-          row.append('<td>' + user.country + '</td>');
+
+          let countrySelect = $('<select>').addClass('country-select');
+          let countries = response.map(user => user.country).filter((value, index, self) => self.indexOf(value) === index);
+
+          countries.forEach(function(country) {
+            let option = $('<option>').text(country).val(country);
+            if (country === user.country) {
+              option.prop('selected', true);
+            }
+            countrySelect.append(option);
+          });
+
+          row.append($('<td>').append(countrySelect));
 
           let citySelect = $('<select>').addClass('city-select');
-          let cities = ["Astana", "Shymkent", "Almata", "Taraz", "Aktobe", "Atyrau", "Kostanai"];
+          let cities = response.filter(user => user.country === user.country).map(user => user.city);
 
           cities.forEach(function(city) {
             let option = $('<option>').text(city).val(city);
@@ -117,9 +130,6 @@ $(document).ready(function() {
               }
             });
           });
-
-
-
           actions.append(updateButton);
           actions.append(deleteButton);
           row.append(actions);
@@ -127,15 +137,24 @@ $(document).ready(function() {
           tbody.append(row);
         });
 
-        $('.city-select').change(function() {
-          let city = $(this).val();
+        $('.country-select').change(function() {
+          let country = $(this).val();
           let id = $(this).closest('tr').data('id');
+          let citySelect = $(this).closest('tr').find('.city-select');
 
           $.ajax({
-            url: `${defaultUrl}/users/${city}/${id}`,
+            url: `${defaultUrl}/users/${country}/${id}`,
             method: 'PUT',
-            data: { city: city },
+            data: { country: country },
             success: function(data) {
+              let cities = response.filter(user => user.country === country).map(user => user.city);
+              citySelect.empty();
+
+              cities.forEach(function(city) {
+                let option = $('<option>').text(city).val(city);
+                citySelect.append(option);
+              });
+
               alert('User updated');
             },
             error: function(error) {
@@ -143,6 +162,7 @@ $(document).ready(function() {
             }
           });
         });
+
       },
       error: function(error) {
         console.log('Error getting users:', error);

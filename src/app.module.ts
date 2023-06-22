@@ -11,6 +11,8 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from "@nestjs/config";
 import { LettersModule } from './letters/letters.module';
 import { GroupsModule } from './groups/groups.module';
+import { Country } from "./entity/country.entity";
+import { City } from "./entity/city.entity";
 
 @Module({
   imports: [
@@ -22,10 +24,10 @@ import { GroupsModule } from './groups/groups.module';
       username: process.env.POSTGRES_USERNAME,
       password: String(process.env.POSTGRES_PASSWORD),
       database: process.env.POSTGRES_DATABASE,
-      entities: [Users, Groups, Spam, Letters, SentUsers],
+      entities: [Users, Groups, Spam, Letters, SentUsers, Country, City],
       synchronize: false,
     }),
-    TypeOrmModule.forFeature([Users, Letters, Groups, Spam, SentUsers]),
+    TypeOrmModule.forFeature([Users, Letters, Groups, Spam, SentUsers, Country, City]),
     UsersModule,
     LettersModule,
     GroupsModule,

@@ -26,7 +26,7 @@ $(document).ready(function() {
                   </td>
                   <td>
                     <button class="addUserBtn" data-group-id="${group.id}" data-toggle="modal" data-target="#addUserModal">Add User</button>
-                  </td>
+                </td>
                </tr>`;
 
         $('#groupsTable tbody').append(row);
@@ -69,65 +69,115 @@ $(document).ready(function() {
     })
   }
 
-    loadGroups();
+  loadGroups();
 
-    $(document).on('click', '.deleteGroupBtn', function() {
-      let groupId = $(this).data('group-id');
+  $(document).on('click', '.deleteGroupBtn', function() {
+    let groupId = $(this).data('group-id');
 
-      $.ajax({
-        url: `${defaultUrl}/groups/${groupId}`,
-        type: 'DELETE',
-        success: function() {
-          location.reload();
+    $.ajax({
+      url: `${defaultUrl}/groups/${groupId}`,
+      type: 'DELETE',
+      success: function() {
+        location.reload();
+      }
+    });
+  });
+
+  $(document).on('click', '.addUserBtn', function() {
+    let groupId = $(this).data('group-id');
+    $('#userSearch').val('');
+    loadUsersForGroup(groupId);
+    $('#addUserModalBtn').data('group-id', groupId);
+  });
+
+  function loadUsersForGroup(groupId) {
+    let selectedUser;
+
+    $.get(`${defaultUrl}/users`, function(users) {
+      $('#userList').hide();
+
+      $('#userSearch').off().on('input', function() {
+        let query = $(this).val().toLowerCase();
+        let filteredUsers = users.filter(user => user.id.toString().includes(query) || user.name.toLowerCase().includes(query) || user.email.toLowerCase().includes(query));
+
+        if (filteredUsers.length > 0 && query !== '') {
+          $('#userList').show();
+          displayUsers(filteredUsers);
+        } else {
+          $('#userList').hide();
         }
       });
-    });
 
-    $(document).on('click', '.addUserBtn', function() {
-      let groupId = $(this).data('group-id');
-
-      loadExistingUsers(function(users) {
-        displayExistingUsers(users);
-      });
-
-      $('#addUserSubmitBtn').off().click(function() {
-        let selectedUserId = $('#existingUserSelect').val();
-
-        $.post(`${defaultUrl}/groups/${groupId}/users/${selectedUserId}`, function() {
+      $('#addUserModalBtn').off().click(function() {
+        let selectedUserId = $('#userList li.selected').data('user-id');
+        if (selectedUserId) {
+          addUserToGroup(groupId, selectedUserId);
           $('#addUserModal').modal('hide');
-          updateGroup(groupId);
-          loadGroups();
-        });
+        } else {
+          alert('Please select a user to add to the group.');
+        }
       });
+      $('#addUserModal').modal('show');
     });
 
-    $('#searchForm').submit(function(event) {
-      event.preventDefault();
+    function displayUsers(users) {
+      let userList = $('#userList');
+      userList.empty();
 
-      let searchQuery = $('#searchForm input[name="search"]').val();
+      users.forEach(user => {
+        let listItem = $('<li>')
+          .addClass('user-item')
+          .data('user-id', user.id)
+          .append($('<input>').attr('type', 'checkbox').attr('value', user.id))
+          .append(`${user.id}: ${user.name} (${user.email})`);
+        userList.append(listItem);
+      });
+      $('.user-item').click(function() {
+        $('.user-item').removeClass('selected');
+        $(this).addClass('selected');
 
-      searchGroups(searchQuery);
-    });
+        selectedUser = $(this).data('user-id'); // Сохраняем выбранного пользователя
+      });
+    }
+  }
 
-    $('#addUserForm').submit(function(event) {
-      let groupId = $('#addUserForm input[name="groupId"]').val();
-      let userId = $('#addUserForm input[name="userId"]').val();
-      let userName = $('#addUserForm input[name="userName"]').val();
-      let userEmail = $('#addUserForm input[name="userEmail"]').val();
+  $('#addUserModalBtn').off().click(function() {
+    let groupId = $(this).data('group-id'); // Retrieve the groupId from the button's data attribute
+    let selectedUserId = $('#userList li.selected').data('user-id');
+    if (selectedUserId) {
+      addUserToGroup(groupId, selectedUserId);
+      $('#addUserModal').modal('hide');
+    } else {
+      alert('Please select a user to add to the group.');
+    }
+  });
 
-      $.post(`${defaultUrl}/groups/${groupId}/users`, { id: userId, name: userName, email: userEmail }, function() {
+  function addUserToGroup(groupId, selectedUserId) {
+    if (selectedUserId) {
+      $.post(`${defaultUrl}/groups/${groupId}/users/${selectedUserId}`, function() {
+        updateGroup(groupId);
         $('#addUserModal').modal('hide');
-      });
+      }, 'json');
+      location.reload();
+    } else {
+      alert('Please select a user to add to the group.');
+    }
+  }
 
-      event.preventDefault();
-    });
+  $('#searchForm').submit(function(event) {
+    event.preventDefault();
 
-    $('.createGroupButton').find('.createGroupButton').click(function() {
-      let newTitle = prompt('Input title:');
-      let newDescription = prompt('Input description:');
+    let searchQuery = $('#searchForm input[name="search"]').val();
 
-      createGroup(newTitle, newDescription);
-    });
+    searchGroups(searchQuery);
+  });
+
+  $('.createGroupButton').find('.createGroupButton').click(function() {
+    let newTitle = prompt('Input title:');
+    let newDescription = prompt('Input description:');
+
+    createGroup(newTitle, newDescription);
+  });
 
   function createGroup(newTitle, newDescription) {
     let newGroup = {
@@ -154,17 +204,6 @@ $(document).ready(function() {
     }).fail(function() {
       alert('Failed to create email');
     });
-  }
-
-  function loadExistingUsers(callback) {
-    $.get(`${defaultUrl}/users`, function(users) {
-      callback(users);
-    });
-  }
-
-  function displayExistingUsers(users) {
-    let selectOptions = users.map(user => `<option value="${user.id}">${user.name} (${user.email})</option>`).join('');
-      $('#existingUserSelect').html(selectOptions);
   }
 
   function loadEmailsFromDatabase(callback) {
@@ -238,44 +277,44 @@ $(document).ready(function() {
   }
 
   function updateGroup(groupId) {
-      $.get(`${defaultUrl}/groups/${groupId}`, function(group) {
-        let row = $(`#groupsTable tbody tr[data-group-id="${groupId}"]`);
-        let usersList = group.users.map(user => `<li>${user.id}: ${user.name} (${user.email}) <button class="deleteUserBtn" data-group-id="${group.id}" data-user-id="${user.id}">Delete User</button></li>`).join('');
+    $.get(`${defaultUrl}/groups/${groupId}`, function(group) {
+      let row = $(`#groupsTable tbody tr[data-group-id="${groupId}"]`);
+      let usersList = group.users.map(user => `<li>${user.id}: ${user.name} (${user.email}) <button class="deleteUserBtn" data-group-id="${group.id}" data-user-id="${user.id}">Delete User</button></li>`).join('');
 
-        row.find('td:nth-child(3)').text(group.description);
-        row.find('td:nth-child(4) ul').html(usersList);
-      });
-    }
+      row.find('td:nth-child(3)').text(group.description);
+      row.find('td:nth-child(4) ul').html(usersList);
+    });
+  }
 
   function editGroup(groupId, updatedTitle, updatedDescription) {
-      let updatedGroup = {
-        title: updatedTitle || '',
-        description: updatedDescription || ''
-      };
+    let updatedGroup = {
+      title: updatedTitle || '',
+      description: updatedDescription || ''
+    };
 
-      $.ajax({
-        url: `${defaultUrl}/groups/${groupId}`,
-        type: 'PATCH',
-        data: updatedGroup,
-        success: function() {
-          loadGroups();
-        },
-        error: function() {
-          console.log('Error updating group');
-        }
-      });
-    }
+    $.ajax({
+      url: `${defaultUrl}/groups/${groupId}`,
+      type: 'PATCH',
+      data: updatedGroup,
+      success: function() {
+        loadGroups();
+      },
+      error: function() {
+        console.log('Error updating group');
+      }
+    });
+  }
 
   $(document).on('click', '.deleteUserBtn', function() {
-      let groupId = $(this).data('group-id');
-      let userId = $(this).data('user-id');
+    let groupId = $(this).data('group-id');
+    let userId = $(this).data('user-id');
 
-      $.ajax({
-        url: `${defaultUrl}/groups/${groupId}/users/${userId}`,
-        type: 'DELETE',
-        success: function() {
-          location.reload();
-        }
-      });
+    $.ajax({
+      url: `${defaultUrl}/groups/${groupId}/users/${userId}`,
+      type: 'DELETE',
+      success: function() {
+        location.reload();
+      }
     });
+  })
 })
