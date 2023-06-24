@@ -1,4 +1,5 @@
 import { IsString, IsEmail, MinLength, IsDate } from "class-validator";
+import { Unique } from "typeorm";
 
 export class CreateUserDto {
   @IsString()
@@ -9,11 +10,12 @@ export class CreateUserDto {
   @MinLength(3)
   surname: string;
 
-  @IsString()
-  @MinLength(3)
-  otchestvo: string;
-
   @IsEmail()
   email: string;
+
+  @IsString()
+  city: string;
+
+  country_id: number
 }
 

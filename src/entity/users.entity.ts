@@ -24,14 +24,14 @@ export class Users {
   surname: string;
 
   @Column()
-  otchestvo: string;
-
-  @Column()
   email: string;
 
   @ManyToOne(() => Country, country => country.users)
   @JoinColumn({ name: 'country_id' })
   country: Country;
+
+  @Column()
+  city: string;
 
   // @CreateDateColumn()
   // createdAt: Date;

@@ -19,17 +19,18 @@ export class UsersService {
   ) {}
 
   async create(dto: CreateUserDto): Promise<Users> {
-    const { email } = dto;
+    const { email, country_id } = dto;
     const existingUser = await this.findByEmailForSendMessage(email);
 
     if(!existingUser) {
-      const user = new Users();
-      user.name = dto.name;
-      user.surname = dto.surname;
-      user.otchestvo = dto.otchestvo;
-      user.email = dto.email;
+      const query = `
+        insert into users(name, surname, email, country_id, city) values('${dto.name}', '${dto.surname}', '${dto.email}', ${country_id}, '${dto.city}')
+      `;
 
-      return this.usersRepository.save(user);
+
+      return this.usersRepository.query(query);
+    } else {
+      throw new Error('User with the same email already exists.');
     }
   }
 
@@ -43,7 +44,7 @@ export class UsersService {
         (user.id && user.id.toString().includes(search)) ||
         (user.name && user.name.includes(search)) ||
         (user.surname && user.surname.includes(search)) ||
-        (user.otchestvo && user.otchestvo.includes(search)) ||
+        // (user.otchestvo && user.otchestvo.includes(search)) ||
         (user.email && user.email.includes(search))
         //(user.country && user.country.includes(search))
       );
@@ -54,18 +55,9 @@ export class UsersService {
 
   async findAll():Promise<Users[]> {
     const query = `
-    select * from users order by id
-    `;
-
-    return this.usersRepository.query(query);
-  }
-
-  async getCountries() {
-    const query = `
-    SELECT countries.country_name, cities.city_name FROM users
+    select users.id, users.name, users.surname, users.email, countries.country_name, users.city from users 
     join countries on countries.country_id = users.country_id
-    JOIN cities ON cities.country_id = countries.country_id
-    GROUP BY countries.country_name, cities.city_name
+    order by id
     `;
 
     return this.usersRepository.query(query);
@@ -82,13 +74,9 @@ export class UsersService {
   }
 
   async findByEmailForSendMessage(email: string): Promise<Users | string> {
-    const user = await this.usersRepository.findOneBy({ email });
+    const user = await this.usersRepository.findOneBy({ email: email });
 
-    if(!user) {
-      return user;
-    }
-
-    throw new Error('Пользователь уже существует');
+    return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -100,8 +88,14 @@ export class UsersService {
 
     user.name = updateUserDto.name;
     user.surname = updateUserDto.surname;
-    user.otchestvo = updateUserDto.otchestvo;
     user.email = updateUserDto.email;
+    user.city = updateUserDto.city;
+
+    const query = `
+    update users set country_id = ${updateUserDto.country_id} where id = ${id}
+    `;
+
+    await this.usersRepository.query(query);
 
     return this.usersRepository.save(user);
   }
@@ -119,7 +113,6 @@ export class UsersService {
   }
 
   async getGroupInUsers(userId: number): Promise<{ name: string; groups: string; email: string }> {
-    console.log('zdec');
     const user = await this.usersRepository.findOneBy({ id: userId });
     if (!user) {
       throw new NotFoundException('User not found');

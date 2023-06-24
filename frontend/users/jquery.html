@@ -14,16 +14,73 @@
     <th>ID</th>
     <th>Name</th>
     <th>Surname</th>
-    <th>Country</th>
-    <th>City</th>
     <th>Email</th>
+    <th class="country-cell">Country</th>
+    <th class="city-cell">City</th>
     <th>Action</th>
   </tr>
   </thead>
+
   <tbody></tbody>
 </table>
 
-<button id="create-user-button">Create User</button>
+<button id="create-user">Create User</button>
+
+<!-- Модальное окно для обновления данных пользователя -->
+<div id="update-user-modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Update User</h2>
+    <form id="update-user-form">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name">
+
+      <label for="surname">Surname:</label>
+      <input type="text" id="surname" name="surname">
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email">
+
+      <label for="country">Country:</label>
+      <select id="country" required>
+        <option value="">Select Country</option>
+      </select>
+      <label for="city">City:</label>
+      <select id="city" required>
+        <option value="">Select City</option>
+      </select>
+
+      <button type="submit">Update</button>
+    </form>
+  </div>
+</div>
+
+<div id="create-user-modal" style="display: none;">
+  <h2>Create User</h2>
+  <form id="create-user-form">
+    <label for="name-create">Name:</label>
+    <input type="text" id="name-create" name="name" pattern=".{3,}" title="Name must be at least 3 characters long" required><br>
+
+    <label for="surname-create">Surname:</label>
+    <input type="text" id="surname-create" name="surname" pattern=".{3,}" title="Surname must be at least 3 characters long" required><br>
+
+    <label for="email-create">Email:</label>
+    <input type="email" id="email-create" name="email" required><br>
+
+    <label for="country-create">Country:</label>
+    <select id="country-create" name="country" required>
+      <option value="">Select Country</option>
+    </select><br>
+
+    <label for="city-create">City:</label>
+    <select id="city-create" name="city" required>
+      <option value="">Select City</option>
+    </select><br>
+
+    <button type="submit">Create</button>
+  </form>
+</div>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="script.js"></script>

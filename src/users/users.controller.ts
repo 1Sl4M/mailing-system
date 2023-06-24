@@ -29,9 +29,9 @@ export class UsersController {
     return this.usersService.getGroupInUsers(userId);
   }
 
-  @Get()
-  getCountries() {
-    return this.usersService.getCountries();
+  @Get('email')
+  findByEmail(@Body() dto: CreateUserDto) {
+    return this.usersService.findByEmail(dto.email);
   }
 
   @Put(':id')
