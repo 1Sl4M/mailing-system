@@ -6,6 +6,9 @@
 </head>
 <body>
 <h1>Mails</h1>
+
+<button id="create-letter-btn" type="button">Create</button>
+
 <table id="lettersTable">
   <thead>
   <tr>
@@ -19,6 +22,28 @@
   </thead>
   <tbody></tbody>
 </table>
+
+<div id="addGroupModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addGroupModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addGroupModalLabel">Select Group</h5>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <input type="text" class="form-control" id="groupSearch" placeholder="Search Groups">
+        </div>
+        <div id="groupListContainer">
+          <ul id="groupList"></ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="closeGroupModal" data-dismiss="modal">Close</button>
+        <button id="addGroupModalBtn" class="addGroupModalBtn" data-group-id="${group.id}" data-toggle="modal" data-target="#addGroupModal">Select Group</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="letters.js"></script>

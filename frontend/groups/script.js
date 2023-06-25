@@ -93,7 +93,7 @@ $(document).ready(function() {
   function loadUsersForGroup(groupId) {
     let selectedUser;
 
-    $.get(`${defaultUrl}/users`, function(users) {
+    $.get(`${defaultUrl}/users/filter`, function(users) {
       $('#userList').hide();
 
       $('#userSearch').off().on('input', function() {

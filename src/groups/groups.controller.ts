@@ -13,6 +13,7 @@ export class GroupsController {
   createGroup(@Body() createGroupDto: CreateGroupDto) {
     return this.groupsService.createGroup(createGroupDto);
   }
+
   @Patch(':id')
   update(@Param('id') id: number, @Body() updateGroupDto: UpdateGroupDto) {
     return this.groupsService.update(id, updateGroupDto);
