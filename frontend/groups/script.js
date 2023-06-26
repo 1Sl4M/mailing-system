@@ -1,6 +1,19 @@
 const defaultUrl = 'http://localhost:3000';
 
 $(document).ready(function() {
+
+  function addUserToGroup(groupId, selectedUserId) {
+    if (selectedUserId) {
+      $.post(`${defaultUrl}/groups/${groupId}/users/${selectedUserId}`, function() {
+        updateGroup(groupId);
+        $('#addUserModal').modal('hide');
+        location.reload();
+      }, 'json');
+    } else {
+      alert('Please select a user to add to the group.');
+    }
+  }
+
   function loadGroups() {
     $.get(`${defaultUrl}/groups`, function(groups) {
       $('#groupsTable tbody').empty();
@@ -107,17 +120,6 @@ $(document).ready(function() {
           $('#userList').hide();
         }
       });
-
-      $('#addUserModalBtn').off().click(function() {
-        let selectedUserId = $('#userList li.selected').data('user-id');
-        if (selectedUserId) {
-          addUserToGroup(groupId, selectedUserId);
-          $('#addUserModal').modal('hide');
-        } else {
-          alert('Please select a user to add to the group.');
-        }
-      });
-      $('#addUserModal').modal('show');
     });
 
     function displayUsers(users) {
@@ -128,41 +130,28 @@ $(document).ready(function() {
         let listItem = $('<li>')
           .addClass('user-item')
           .data('user-id', user.id)
-          .append($('<input>').attr('type', 'checkbox').attr('value', user.id))
+          .append($('<input>').attr('type', 'radio').attr('name', 'userSelection').attr('value', user.id))
           .append(`${user.id}: ${user.name} (${user.email})`);
         userList.append(listItem);
       });
-      $('.user-item').click(function() {
-        $('.user-item').removeClass('selected');
-        $(this).addClass('selected');
 
-        selectedUser = $(this).data('user-id'); // Сохраняем выбранного пользователя
+      $('input[name="userSelection"]').change(function() {
+        let selectedUserId = $(this).val();
+        console.log(selectedUserId);
       });
     }
   }
 
   $('#addUserModalBtn').off().click(function() {
-    let groupId = $(this).data('group-id'); // Retrieve the groupId from the button's data attribute
-    let selectedUserId = $('#userList li.selected').data('user-id');
+    let selectedUserId = $('input[name="userSelection"]:checked').val();
     if (selectedUserId) {
+      let groupId = $(this).data('group-id');
       addUserToGroup(groupId, selectedUserId);
       $('#addUserModal').modal('hide');
     } else {
       alert('Please select a user to add to the group.');
     }
   });
-
-  function addUserToGroup(groupId, selectedUserId) {
-    if (selectedUserId) {
-      $.post(`${defaultUrl}/groups/${groupId}/users/${selectedUserId}`, function() {
-        updateGroup(groupId);
-        $('#addUserModal').modal('hide');
-      }, 'json');
-      location.reload();
-    } else {
-      alert('Please select a user to add to the group.');
-    }
-  }
 
   $('#searchForm').submit(function(event) {
     event.preventDefault();

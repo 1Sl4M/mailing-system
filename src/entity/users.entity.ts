@@ -34,7 +34,7 @@ export class Users {
   city: string;
 
   // @CreateDateColumn()
-  // createdAt: Date;
+  // createdAt: Timestamp;
 
   @ManyToMany(() => Groups)
   @JoinTable({

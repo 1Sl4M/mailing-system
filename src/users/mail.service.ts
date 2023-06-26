@@ -36,6 +36,9 @@ export class MailService {
   }
 
   async sendMailToGroupMembers(groupId: number, subject: string, text: string, spam: any, spamId: number): Promise<void> {
+    let i = 0;
+    let failedUsers = 0;
+
     const users = await this.usersRepository.find({
       where: {
         groups: {
@@ -45,15 +48,10 @@ export class MailService {
     });
 
     for (const user of users) {
-      let i = 0;
-      let failedUsers = 0;
-
       const sentUser = new SentUsers();
       sentUser.user_id = user.id;
       sentUser.spam_id = spamId;
 
-      await this.sentUsersRepository.save(sentUser);
-      await this.sendMail(user.email, subject, text);
       try {
         await this.sendMail(user.email, subject, text);
         sentUser.status_code = 'G';
@@ -67,10 +65,10 @@ export class MailService {
 
       if (i === users.length) {
         spam.status_code = 'G';
-      } else if (failedUsers > 0) {
-        spam.status_code = 'Y';
-      } else {
+      } else if(failedUsers === users.length ) {
         spam.status_code = 'R';
+      }else if (failedUsers > 0) {
+        spam.status_code = 'Y';
       }
 
       await this.spamRepository.save(spam);

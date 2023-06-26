@@ -1,4 +1,4 @@
-import { IsString, IsEmail, MinLength, IsDate } from "class-validator";
+import { IsString, IsEmail, MinLength, IsDate, Matches } from "class-validator";
 import { Unique } from "typeorm";
 
 export class CreateUserDto {
@@ -11,6 +11,7 @@ export class CreateUserDto {
   surname: string;
 
   @IsEmail()
+  @Matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
   email: string;
 
   @IsString()

@@ -2,6 +2,7 @@ const defaultUrl = 'http://localhost:3000'
 
 $(document).ready(function() {
   getUsers();
+  getCountries();
 
   $('#search-button').on('click', function() {
     let searchValue = $('#search-input').val();
@@ -9,7 +10,7 @@ $(document).ready(function() {
   });
 
   $('#create-user').on('click', function() {
-    getCountriesCreate();
+    getCountriesForCreateUser();
 
     $('#create-user-modal').css('display', 'block');
   });
@@ -39,7 +40,7 @@ $(document).ready(function() {
         tbody.empty();
 
         response.forEach(function(user) {
-          let row = $('<tr>');
+          let row = $(`<tr>`).addClass('rowTable');
           row.append('<td>' + user.id + '</td>');
           row.append('<td>' + user.name + '</td>');
           row.append('<td>' + user.surname + '</td>');
@@ -49,7 +50,7 @@ $(document).ready(function() {
 
           let actions = $('<td>');
           let deleteButton = $('<button>').text('Delete');
-          let updateButton = $('<button>').text('Update user').addClass('update-button');
+          let updateButton = $(`<button city=${user.city} country=${user.country_name}>`).text('Update user').addClass('update-button');
 
           deleteButton.on('click', function() {
             let row = $(this).closest('tr');
@@ -68,6 +69,20 @@ $(document).ready(function() {
             });
           });
 
+          updateButton.data('saved-country', user.country_id);
+          updateButton.data('saved-city', user.city_id);
+
+          updateButton.on('click', function() {
+            let row = $(this).closest('tr');
+            let userId = row.attr('data-id');
+            let savedCountry = $(this).data('saved-country');
+            let savedCity = $(this).data('saved-city');
+
+            // Открытие модального окна обновления пользователя
+            $('.update-button').click(function() {
+              $('#update-user-modal').show();
+            })
+          });
           actions.append(deleteButton);
           actions.append(updateButton);
 
@@ -77,6 +92,20 @@ $(document).ready(function() {
 
           row.attr('data-id', user.id);
         });
+        $('.rowTable .update-button').click(function() {
+          let country = $(this).attr('country');
+          let city = $(this).attr('city');
+
+          console.log(city, country);
+
+          $('#city').append(`<option value="${city}"> ${city} </option>`);
+          $('#countries').append(`<option value="${country}"> ${country} </option>`);
+
+          $('#city').val(city);
+          $('#countries').val(country);
+
+
+        })
       },
       error: function(error) {
         console.log('Error getting users:', error);
@@ -84,7 +113,9 @@ $(document).ready(function() {
     });
   }
 
-  function getCountriesCreate() {
+
+
+  function getCountriesForCreateUser() {
     $.ajax({
       url: `${defaultUrl}/country`,
       method: 'GET',
@@ -104,7 +135,7 @@ $(document).ready(function() {
     });
   }
 
-  function getCitiesCreate(countryId) {
+  function getCitiesForCreateUser(countryId) {
     $.ajax({
       url: `${defaultUrl}/city/${countryId}`,
       method: 'GET',
@@ -112,7 +143,7 @@ $(document).ready(function() {
         const citySelect = $('#city-create');
 
         citySelect.empty();
-        citySelect.append($('<option>').val('').text('Select City'));
+        citySelect.append($('<option>').val('').text('Select country'));
 
         response.forEach(function(city) {
           console.log(city);
@@ -130,14 +161,15 @@ $(document).ready(function() {
       url: `${defaultUrl}/country`,
       method: 'GET',
       success: function(response) {
-        const countrySelect = $('#country');
+        const countrySelect = $('#countries');
 
         countrySelect.empty();
-        countrySelect.append($('<option>').val('').text('Select Country'));
+        countrySelect.append($('<option>').val('').text('Select country'));
 
         response.forEach(function(country) {
           countrySelect.append($('<option>').val(country.country_id).text(country.country_name));
         });
+
       },
       error: function(error) {
         console.log('Error getting countries:', error);
@@ -145,7 +177,7 @@ $(document).ready(function() {
     });
   }
 
-  function getCities(countryId) {
+  function getCities(countryId, savedCity) {
     $.ajax({
       url: `${defaultUrl}/city/${countryId}`,
       method: 'GET',
@@ -156,7 +188,6 @@ $(document).ready(function() {
         citySelect.append($('<option>').val('').text('Select City'));
 
         response.forEach(function(city) {
-          console.log(city);
           citySelect.append($('<option>').val(city.city_name).text(city.city_name));
         });
       },
@@ -166,19 +197,18 @@ $(document).ready(function() {
     });
   }
 
-  $('#country').on('change', function() {
+
+  $('#countries').on('change', function() {
     const countryId = $(this).val();
     getCities(countryId);
   });
 
   $('#country-create').on('change', function() {
     const countryId = $(this).val();
-    getCitiesCreate(countryId);
+    getCitiesForCreateUser(countryId);
   });
 
   $(document).on('click', '.update-button', function() {
-    getCountries();
-
     let row = $(this).closest('tr');
     let userId = row.find('td:nth-child(1)').text();
     let userName = row.find('td:nth-child(2)').text();
@@ -193,9 +223,6 @@ $(document).ready(function() {
     $('#email').val(userEmail);
 
     $('#country').val(userCountry);
-    setTimeout(function() {
-      $('#city').val(userCity);
-    }, 100);
 
     $('#update-user-modal').css('display', 'block');
 
@@ -206,11 +233,11 @@ $(document).ready(function() {
         name: $('#name').val(),
         surname: $('#surname').val(),
         email: $('#email').val(),
-        country_id: $('#country').val(),
+        country_id: $('#countries').val(),
         city: $('#city').val()
       };
 
-      row.find('td:nth-child(6)').text($('#country option:selected').text());
+      row.find('td:nth-child(6)').text($('#countries option:selected').text());
       row.find('td:nth-child(7)').text($('#city option:selected').text());
 
       $('#update-user-modal').css('display', 'none');
@@ -322,12 +349,11 @@ $(document).ready(function() {
           row.append('<td>' + user.surname + '</td>');
           row.append('<td>' + user.email + '</td>');
           row.append('<td>' + user.country_name + '</td>');
-          row.append('<td>' + user.city_name + '</td>');
-
-          row.attr('data-id', user.id);
+          row.append('<td>' + user.city + '</td>');
 
           let actions = $('<td>');
           let deleteButton = $('<button>').text('Delete');
+          let updateButton = $('<button>').text('Update user').addClass('update-button');
 
           deleteButton.on('click', function() {
             let row = $(this).closest('tr');
@@ -347,9 +373,13 @@ $(document).ready(function() {
           });
 
           actions.append(deleteButton);
+          actions.append(updateButton);
+
           row.append(actions);
 
           tbody.append(row);
+
+          row.attr('data-id', user.id);
         });
       },
       error: function(error) {
