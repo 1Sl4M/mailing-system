@@ -56,6 +56,7 @@ export class LettersController {
   async getAllSpams() {
     return this.letterService.getAllSpam();
   }
+
   @Get(':letterId')
   async findLetters(@Param('letterId') letterId: number) {
     return this.letterService.findLetters(letterId);
@@ -75,7 +76,7 @@ export class LettersController {
 
     await this.spamRepository.save(spam);
 
-    await this.mailService.sendMailToGroupMembers(groupId, letter.theme, letter.content, spam.id)
+    await this.mailService.sendMailToGroupMembers(groupId, letter.theme, letter.content, spam, spam.id)
 
     return 'Письмо отправлено в группу';
   }

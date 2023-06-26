@@ -1,24 +1,18 @@
 const defaultUrl = 'http://localhost:3000';
 
 $(document).ready(function() {
-  $('#addGroupModal').hide();
+  let selectedGroupId;
 
   $('#create-letter-btn').click(function() {
     $('#addGroupModal').show();
-    loadGroupsForGroup();
+    loadGroups();
   });
 
   $('#closeGroupModal').click(function() {
     $('#addGroupModal').hide();
   });
 
-  $(document).on('click', '.addUserBtn', function() {
-    $('#groupSearch').val('');
-    loadGroupsForGroup();
-    $('#addGroupModalBtn').data('group-id', groupId);
-  });
-
-  function loadGroupsForGroup() {
+  function loadGroups() {
     let selectedGroup;
 
     $.get(`${defaultUrl}/groups`, function(groups) {
@@ -29,20 +23,12 @@ $(document).ready(function() {
         let filteredGroups = groups.filter(group => group.id.toString().includes(query) || group.title.toLowerCase().includes(query) || group.description.toLowerCase().includes(query));
 
         if (filteredGroups.length > 0 && query !== '') {
-          $('#groupList').show(); // Fixed selector to show group list
+          $('#groupList').show();
           displayGroups(filteredGroups);
         } else {
           $('#groupList').hide();
         }
       });
-
-      $('#addGroupModalBtn').off().click(function() {
-        // Open create letter modal window
-        $('#addGroupModal').hide();
-        $('#create-letter-modal').show();
-      });
-
-      $('#addGroupsModal').modal('show');
     });
 
     function displayGroups(groups) {
@@ -53,23 +39,38 @@ $(document).ready(function() {
         let listItem = $('<li>')
           .addClass('group-item')
           .data('group-id', group.id)
-          .append($('<input>').attr('type', 'checkbox').attr('value', group.id))
+          .append($('<input>').attr('type', 'radio').attr('name', 'groupSelection').attr('value', group.id))
           .append(`${group.id}: ${group.title} (${group.description})`);
         groupList.append(listItem);
       });
-      $('.group-item').click(function() {
-        $('.group-item').removeClass('selected');
-        $(this).addClass('selected');
 
-        selectedGroup = $(this).data('group-id');
-        console.log(selectedGroup);
+      $('input[name="groupSelection"]').change(function() {
+        selectedGroupId = $(this).val();
+        console.log(selectedGroupId);
       });
     }
   }
 
-  // Event handler for create letter button
-  $('#create-letter-btn').click(function() {
-    $('#select-group-modal').show();
+  $('#addGroupModalBtn').click(function() {
+    if ($('input[name="groupSelection"]:checked').length > 0) {
+      $('#addGroupModal').hide();
+      $('#create-letter-modal').show();
+    } else {
+      alert('Please select a group before creating a letter.');
+    }
+  });
+
+  $('#create-letter-form').submit(function(event) {
+    event.preventDefault(); // Prevents the default form submission behavior
+
+    let theme = $('#theme').val();
+    let content = $('#content').val();
+
+    createLetter(selectedGroupId, theme, content);
+  });
+
+  $('.close').click(function() {
+    $('#create-letter-modal').hide();
   });
 
   function loadSpam() {
@@ -103,7 +104,7 @@ $(document).ready(function() {
                     row.append(groupCell);
 
                     $.ajax({
-                      url: `${defaultUrl}/groups/statusCode/${item.group_id}`,
+                      url: `${defaultUrl}/groups/statusCode/${item.group_id}/letters/${letter.id}`,
                       type: 'GET',
                       success: function(users) {
                         console.log(item.group_id);
@@ -150,4 +151,26 @@ $(document).ready(function() {
   }
 
   loadSpam();
+
+
+  function createLetter(groupId, theme, content) {
+    $.ajax({
+      url: `${defaultUrl}/letters`,
+      type: 'POST',
+      data: {
+        groupId: groupId,
+        theme: theme,
+        content: content
+      },
+      success: function(letter) {
+        $.ajax({
+          url: `${defaultUrl}/letters/send-email/${letter.id}/${groupId}`,
+          type: 'GET',
+          success: function() {
+            alert('Message sent successfully');
+          }
+        })
+      }
+    });
+  }
 });

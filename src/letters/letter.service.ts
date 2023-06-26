@@ -33,7 +33,9 @@ export class LetterService {
     letter.theme = theme;
     letter.content = content;
 
-    return await this.letterRepository.save(letter);
+    await this.letterRepository.save(letter);
+
+    return letter;
   }
 
   async getAllSpam(): Promise<Spam[]> {

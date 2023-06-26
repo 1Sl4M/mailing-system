@@ -35,7 +35,7 @@ export class MailService {
     await this.transporter.sendMail(mailOptions);
   }
 
-  async sendMailToGroupMembers(groupId: number, subject: string, text: string, spamId: number): Promise<void> {
+  async sendMailToGroupMembers(groupId: number, subject: string, text: string, spam: any, spamId: number): Promise<void> {
     const users = await this.usersRepository.find({
       where: {
         groups: {
@@ -45,21 +45,35 @@ export class MailService {
     });
 
     for (const user of users) {
+      let i = 0;
+      let failedUsers = 0;
+
       const sentUser = new SentUsers();
       sentUser.user_id = user.id;
       sentUser.spam_id = spamId;
 
       await this.sentUsersRepository.save(sentUser);
       await this.sendMail(user.email, subject, text);
-      // try {
-      //   const query =`
-      //
-      //   `;
-      //   await this.sendMail(user.email, subject, text);
-      //   await this.sentUsersRepository.query()
-      // } catch (e) {
-      //
-      // }
+      try {
+        await this.sendMail(user.email, subject, text);
+        sentUser.status_code = 'G';
+        i++;
+      } catch (e) {
+        sentUser.status_code = 'R';
+        failedUsers++;
+      }
+
+      await this.sentUsersRepository.save(sentUser);
+
+      if (i === users.length) {
+        spam.status_code = 'G';
+      } else if (failedUsers > 0) {
+        spam.status_code = 'Y';
+      } else {
+        spam.status_code = 'R';
+      }
+
+      await this.spamRepository.save(spam);
     }
   }
 }

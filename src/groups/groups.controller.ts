@@ -38,9 +38,9 @@ export class GroupsController {
     return this.groupsService.findAll();
   }
 
-  @Get('statusCode/:groupId')
-  getUsersStatusCode(@Param('groupId') groupId: number) {
-    return this.groupsService.getUsersStatusCode(groupId);
+  @Get('statusCode/:groupId/letters/:letterId')
+  getUsersStatusCode(@Param('groupId') groupId: number, @Param('letterId') letterId: number) {
+    return this.groupsService.getUsersStatusCode(groupId, letterId);
   }
 
   @Post(':groupId/users/:userId')
