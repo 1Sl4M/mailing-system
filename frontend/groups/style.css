@@ -63,6 +63,9 @@ input[type=checkbox], input[type=radio] {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
 }
+#groupsTable tbody tr {
+    border-bottom: 1px solid #ccc;
+}
 
 .modal-dialog {
     max-width: 550px;

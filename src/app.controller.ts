@@ -9,6 +9,12 @@ export class AppController {
   getCountries() {
     return this.appService.getCountries();
   }
+
+  @Get('country/city')
+  getCountryAndCityId() {
+    return this.appService.getCountryAndCityId();
+  }
+
   @Get('city/:countryId')
   getCities(@Param('countryId') countryId: number) {
     return this.appService.getCities(countryId);

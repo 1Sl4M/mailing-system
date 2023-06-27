@@ -14,8 +14,7 @@ export class CreateUserDto {
   @Matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
   email: string;
 
-  @IsString()
-  city: string;
+  city_id: number;
 
   country_id: number
 }

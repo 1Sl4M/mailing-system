@@ -19,12 +19,12 @@ export class UsersService {
   ) {}
 
   async create(dto: CreateUserDto): Promise<Users> {
-    const { email, country_id } = dto;
+    const { email, country_id, city_id } = dto;
     const existingUser = await this.findByEmailForSendMessage(email);
 
     if(!existingUser) {
       const query = `
-        insert into users(name, surname, email, country_id, city) values('${dto.name}', '${dto.surname}', '${dto.email}', ${country_id}, '${dto.city}')
+        insert into users(name, surname, email, country_id, city_id) values('${dto.name}', '${dto.surname}', '${dto.email}', ${country_id}, ${city_id})
       `;
 
 
@@ -55,8 +55,9 @@ export class UsersService {
 
   async findAll():Promise<Users[]> {
     const query = `
-    select users.id, users.name, users.surname, users.email, countries.country_name, users.city from users 
+    select users.id, users.name, users.surname, users.email, countries.country_name, cities.city_name from users 
     join countries on countries.country_id = users.country_id
+    join cities on cities.city_id = users.city_id
     order by id
     `;
 
@@ -89,13 +90,16 @@ export class UsersService {
     user.name = updateUserDto.name;
     user.surname = updateUserDto.surname;
     user.email = updateUserDto.email;
-    user.city = updateUserDto.city;
 
     const query = `
     update users set country_id = ${updateUserDto.country_id} where id = ${id}
     `;
+    const query1 = `
+    update users set city_id = ${updateUserDto.city_id} where id = ${id}
+    `;
 
     await this.usersRepository.query(query);
+    await this.usersRepository.query(query1);
 
     return this.usersRepository.save(user);
   }
@@ -119,7 +123,7 @@ export class UsersService {
     }
 
     const query = `
-      SELECT group_id FROM users_and_groups
+      SELECT group_id FROM user_group
       WHERE user_id = ${userId}
     `;
 

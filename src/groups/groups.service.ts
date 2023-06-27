@@ -42,7 +42,7 @@ export class GroupsService {
 
   async getGroups(groupId: number) {
     const query = `
-    select groups.id, groups.title, groups.description from spam
+    select groups.id, groups.title, groups.description from spams
     join groups on groups.id = ${groupId}
     where ${groupId} = groups.id
     group by groups.id, groups.title, groups.description
@@ -74,11 +74,11 @@ export class GroupsService {
     }
 
     const query = `
-    delete from users_and_groups
+    delete from user_group
     where group_id = ${id}
   `;
     const query1 = `
-    delete from spam
+    delete from spams
     where group_id = ${id}
   `;
 
@@ -86,7 +86,7 @@ export class GroupsService {
     delete from sent_users
     where spam_id in (
       select id
-      from spam
+      from spams
       where group_id = ${id}
     )
   `;
@@ -156,10 +156,10 @@ export class GroupsService {
     const query = `
     select users.id, users.name, users.email, sent_users.status_code from users
     join sent_users on users.id = sent_users.user_id
-    join users_and_groups ON users_and_groups.user_id = users.id
-    join spam on spam.id = sent_users.spam_id
-    join letters on letters.id = spam.letter_id
-    where users_and_groups.group_id = ${groupId} and letters.id = ${letterId}
+    join user_group ON user_group.user_id = users.id
+    join spams on spams.id = sent_users.spam_id
+    join letters on letters.id = spams.letter_id
+    where user_group.group_id = ${groupId} and letters.id = ${letterId}
     `;
 
     return this.usersRepository.query(query);
@@ -198,7 +198,7 @@ export class GroupsService {
     }
 
     const query = `
-    SELECT group_id FROM users_and_groups
+    SELECT group_id FROM user_group
     WHERE user_id = ${userId}
   `;
 
@@ -223,7 +223,7 @@ export class GroupsService {
 
   async removeUserFromGroup(groupId: number, userId: number) {
     const query = `
-    delete from users_and_groups
+    delete from user_group
     where group_id = ${groupId} and user_id = ${userId}
     `;
 

@@ -47,11 +47,22 @@ $(document).ready(function() {
       $(document).on('click', '.editGroupBtn', function() {
         let groupId = $(this).data('group-id');
 
-        let updatedTitle = prompt('Input new title:');
-        let updatedDescription = prompt('Input new description:');
+        $.get(`${defaultUrl}/groups/${groupId}`, function(groups) {
+          $('#editGroupModal').modal('show');
 
-        editGroup(groupId, updatedTitle, updatedDescription);
+          groups.forEach(function(group) {
+            $('#editGroupModal #title').val(group.title);
+            $('#editGroupModal #description').val(group.description);
+          });
+          $(document).on('click', '#updateGroupBtn', function() {
+            let updatedTitle = $('#editGroupModal #title').val();
+            let updatedDescription = $('#editGroupModal #description').val();
+
+            editGroup(groupId, updatedTitle, updatedDescription);
+          });
+        });
       });
+
       $(document).on('click', '.createEmailBtn', function() {
         let groupId = $(this).data('group-id');
         $('#saveEmailBtn').data('group-id', groupId);
@@ -286,7 +297,7 @@ $(document).ready(function() {
       type: 'PATCH',
       data: updatedGroup,
       success: function() {
-        loadGroups();
+        location.reload();
       },
       error: function() {
         console.log('Error updating group');

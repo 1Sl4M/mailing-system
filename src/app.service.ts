@@ -3,22 +3,32 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { City } from "./entity/city.entity";
 import { Repository } from "typeorm";
 import { Country } from "./entity/country.entity";
+import { Users } from "./entity/users.entity";
 
 @Injectable()
 export class AppService {
   constructor(
     @InjectRepository(City) private readonly cityRepository: Repository<City>,
-    @InjectRepository(Country) private readonly countryRepository: Repository<Country>
+    @InjectRepository(Country) private readonly countryRepository: Repository<Country>,
+    @InjectRepository(Users) private readonly usersRepository: Repository<Users>
   ) {
   }
   getHello(): string {
     return 'Hello World!';
   }
 
+  getCountryAndCityId() {
+    const query = `
+    select city_id, country_id from users
+    `;
+
+    return this.usersRepository.query(query);
+  }
+
   async getCities(countryId: number) {
     const query = `
     SELECT cities.city_id, cities.city_name FROM cities
-    join countries on ${countryId} =  cities.country_id
+    join countries on ${countryId} = cities.country_id
     group by cities.city_id, cities.city_name
     `;
 

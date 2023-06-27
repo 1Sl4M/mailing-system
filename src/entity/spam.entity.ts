@@ -11,7 +11,7 @@ import { Groups } from "./groups.entity";
 import { Letters } from "./letters.entity";
 import { SentUsers } from "./sent_users.entity";
 
-@Entity({ name: 'spam' })
+@Entity({ name: 'spams' })
 export class Spam {
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,8 +23,6 @@ export class Spam {
   letter_id: number;
 
   @Column()
-  @IsAlpha()
-  @MaxLength(1)
   status_code: string;
 
   @OneToOne(() => Groups, group => group.spam)

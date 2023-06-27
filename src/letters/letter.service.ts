@@ -14,7 +14,7 @@ export class LetterService {
 
   async findLetters(letterId: number) {
     const query = `
-    select letters.id, letters.theme, letters.content from spam
+    select letters.id, letters.theme, letters.content from spams
     join letters on letters.id = ${letterId}
     where letters.id = ${letterId}
     group by letters.id, letters.theme, letters.content

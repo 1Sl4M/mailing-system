@@ -11,6 +11,7 @@ import {
 import { Groups } from "./groups.entity";
 import { SentUsers } from "./sent_users.entity";
 import { Country } from "./country.entity";
+import { City } from "./city.entity";
 
 @Entity({ name: 'users' })
 export class Users {
@@ -30,15 +31,16 @@ export class Users {
   @JoinColumn({ name: 'country_id' })
   country: Country;
 
-  @Column()
-  city: string;
+  @ManyToOne(() => City, city => city.users)
+  @JoinColumn({name: 'city_id'})
+  city: City;
 
   // @CreateDateColumn()
   // createdAt: Timestamp;
 
   @ManyToMany(() => Groups)
   @JoinTable({
-    name: 'users_and_groups',
+    name: 'user_group',
     joinColumn: {
       name: 'user_id',
       referencedColumnName: 'id',
