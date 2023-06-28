@@ -27,7 +27,6 @@ export class UsersService {
         insert into users(name, surname, email, country_id, city_id) values('${dto.name}', '${dto.surname}', '${dto.email}', ${country_id}, ${city_id})
       `;
 
-
       return this.usersRepository.query(query);
     } else {
       throw new Error('User with the same email already exists.');

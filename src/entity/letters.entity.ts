@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Users } from "./users.entity";
 import { Spam } from "./spam.entity";
 
@@ -13,6 +13,7 @@ export class Letters {
   @Column()
   content: string;
 
-  @OneToOne(() => Spam, spam => spam.letter)
+  @OneToMany(() => Spam, spam => spam.letter)
+  @JoinColumn({ name: 'id' })
   spam: Spam;
 }

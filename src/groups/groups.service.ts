@@ -83,7 +83,7 @@ export class GroupsService {
   `;
 
     const query2 = `
-    delete from sent_users
+    delete from user_email_history
     where spam_id in (
       select id
       from spams
@@ -154,10 +154,10 @@ export class GroupsService {
 
   async getUsersStatusCode(groupId: number, letterId: number) {
     const query = `
-    select users.id, users.name, users.email, sent_users.status_code from users
-    join sent_users on users.id = sent_users.user_id
+    select users.id, users.name, users.email, user_email_history.status_code from users
+    join user_email_history on users.id = user_email_history.user_id
     join user_group ON user_group.user_id = users.id
-    join spams on spams.id = sent_users.spam_id
+    join spams on spams.id = user_email_history.spam_id
     join letters on letters.id = spams.letter_id
     where user_group.group_id = ${groupId} and letters.id = ${letterId}
     `;
@@ -209,7 +209,7 @@ export class GroupsService {
     }
 
     const deleteQuery = `
-    DELETE FROM sent_users WHERE user_id = ${userId}
+    DELETE FROM user_email_history WHERE user_id = ${userId}
   `;
 
     await this.sentUsersRepository.query(deleteQuery);

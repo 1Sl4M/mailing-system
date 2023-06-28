@@ -88,7 +88,21 @@ $(document).ready(function() {
                 let row = $('<tr></tr>');
                 row.append('<td>' + letter.id + '</td>');
                 row.append('<td>' + letter.theme + '</td>');
-                row.append('<td>' + status_code + '</td>');
+
+                switch (status_code) {
+                  case 'SUCCESS':
+                    row.append('<td class="success">' + status_code + '</td>');
+                    break;
+                  case 'FAIL':
+                    row.append('<td class="fail">' + status_code + '</td>');
+                    break;
+                  case 'PARTIAL':
+                    row.append('<td class="partial">' + status_code + '</td>');
+                    break;
+                  default:
+                    row.append('<td>' + status_code + '</td>');
+                }
+
                 row.append('<td>' + letter.content + '</td>');
 
                 $.ajax({

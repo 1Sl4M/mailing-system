@@ -33,7 +33,7 @@ export class Spam {
   @JoinColumn({ name: "letter_id" })
   letter: Letters;
 
-  @ManyToOne(() => SentUsers, sentUsers => sentUsers.spam, {
+  @OneToOne(() => SentUsers, sentUsers => sentUsers.spam, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: "id" })

@@ -5,7 +5,7 @@ import {
   JoinTable,
   ManyToMany, ManyToOne, OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn, Timestamp,
   Unique
 } from "typeorm";
 import { Groups } from "./groups.entity";
@@ -35,8 +35,8 @@ export class Users {
   @JoinColumn({name: 'city_id'})
   city: City;
 
-  // @CreateDateColumn()
-  // createdAt: Timestamp;
+  // @CreateDateColumn({ type: 'date', default: () => 'CURRENT_TIMESTAMP' })
+  // created_at: Date;
 
   @ManyToMany(() => Groups)
   @JoinTable({

@@ -54,21 +54,21 @@ export class MailService {
 
       try {
         await this.sendMail(user.email, subject, text);
-        sentUser.status_code = 'G';
+        sentUser.status_code = 'SUCCESS';
         i++;
       } catch (e) {
-        sentUser.status_code = 'R';
+        sentUser.status_code = 'FAIL';
         failedUsers++;
       }
 
       await this.sentUsersRepository.save(sentUser);
 
       if (i === users.length) {
-        spam.status_code = 'G';
+        spam.status_code = 'SUCCESS';
       } else if(failedUsers === users.length ) {
-        spam.status_code = 'R';
+        spam.status_code = 'FAIL';
       }else if (failedUsers > 0) {
-        spam.status_code = 'Y';
+        spam.status_code = 'PARTIAL';
       }
 
       await this.spamRepository.save(spam);

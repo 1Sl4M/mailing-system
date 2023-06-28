@@ -7,10 +7,53 @@ h1 {
     text-align: center;
     margin-top: 20px;
 }
+
+
+.navbar {
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.navbar-brand {
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #fff;
+}
+
+.navbar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.navbar-menu li {
+    margin-left: 10px;
+}
+
+.navbar-menu li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+.navbar-menu li a:hover {
+    background-color: #fff;
+    color: #333;
+}
+
+
 .search-input {
     width: 200px;
     border: 1px solid #ccc;
     padding: 10px;
+    margin-top: 20px;
     margin-bottom: 20px;
 }
 #user-table {
@@ -118,3 +161,6 @@ button {
     border: none;
     cursor: pointer;
 }
+
+
+
