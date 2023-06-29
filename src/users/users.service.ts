@@ -22,9 +22,11 @@ export class UsersService {
     const { email, country_id, city_id } = dto;
     const existingUser = await this.findByEmailForSendMessage(email);
 
+    let newDate = new Date();
+
     if(!existingUser) {
       const query = `
-        insert into users(name, surname, email, country_id, city_id) values('${dto.name}', '${dto.surname}', '${dto.email}', ${country_id}, ${city_id})
+        insert into users(name, surname, email, country_id, city_id, created_at) values('${dto.name}', '${dto.surname}', '${dto.email}', ${country_id}, ${city_id}, 'newDate')
       `;
 
       return this.usersRepository.query(query);

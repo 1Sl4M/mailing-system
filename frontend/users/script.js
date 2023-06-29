@@ -29,7 +29,6 @@ $(document).ready(function() {
     createUser(newUser);
   });
 
-
   function getUsers() {
     $.ajax({
       url: `${defaultUrl}/users/filter`,
@@ -104,6 +103,7 @@ $(document).ready(function() {
 
   $('#update-button-modal').click(function() {
     getUsers();
+    location.reload();
   })
 
   function getCountriesForCreateUser() {
@@ -220,10 +220,19 @@ $(document).ready(function() {
     $('#update-user-form').off('submit').on('submit', function(event) {
       event.preventDefault();
 
+      let emailInput = $('#email');
+      let emailValue = emailInput.val();
+      let emailRegex = /^\S+@\S+\.\S+$/;
+
+      if (!emailRegex.test(emailValue)) {
+        emailInput.addClass('error');
+        emailInput.siblings('.error-message').text('Invalid email address');
+      }
+
       let updatedUser = {
         name: $('#name').val(),
         surname: $('#surname').val(),
-        email: $('#email').val(),
+        email: emailValue,
         country_id: $('#countries').val(),
         city_id: $('#city').val()
       };
@@ -250,6 +259,8 @@ $(document).ready(function() {
 
   $('.close').on('click', function() {
     $('#update-user-modal').css('display', 'none');
+    $('#email').removeClass('error');
+    $('#email').siblings('.error-message').text('');
   });
 
   function performSearch(searchValue) {
@@ -316,9 +327,7 @@ $(document).ready(function() {
         location.reload();
       },
       error: function(error) {
-        if (error.status === 500) {
-          alert('Email is not unique')
-        }
+        console.log(error);
       }
     });
   }
