@@ -104,7 +104,6 @@ $(document).ready(function() {
 
   $('#update-button-modal').click(function() {
     getUsers();
-    location.reload();
   })
 
   function getCountriesForCreateUser() {
@@ -239,7 +238,6 @@ $(document).ready(function() {
         method: 'PUT',
         data: updatedUser,
         success: function(response) {
-          console.log('User updated:', response);
           $('#update-user-modal').css('display', 'none');
           getUsers();
         },
@@ -252,7 +250,6 @@ $(document).ready(function() {
 
   $('.close').on('click', function() {
     $('#update-user-modal').css('display', 'none');
-    location.reload();
   });
 
   function performSearch(searchValue) {
@@ -270,6 +267,8 @@ $(document).ready(function() {
           row.append('<td>' + user.name + '</td>');
           row.append('<td>' + user.surname + '</td>');
           row.append('<td>' + user.email + '</td>');
+          row.append('<td>' + user.country_name + '</td>');
+          row.append('<td>' + user.city_name + '</td>');
 
           row.attr('data-id', user.id);
 
@@ -333,20 +332,21 @@ $(document).ready(function() {
       data: { search: searchValue },
       success: function(response) {
         let tbody = $('#user-table tbody');
+
         tbody.empty();
 
         response.forEach(function(user) {
-          let row = $('<tr>');
+          let row = $(`<tr>`).addClass('rowTable');
           row.append('<td>' + user.id + '</td>');
           row.append('<td>' + user.name + '</td>');
           row.append('<td>' + user.surname + '</td>');
           row.append('<td>' + user.email + '</td>');
           row.append('<td>' + user.country_name + '</td>');
-          row.append('<td>' + user.city + '</td>');
+          row.append('<td>' + user.city_name + '</td>');
 
           let actions = $('<td>');
           let deleteButton = $('<button>').text('Delete');
-          let updateButton = $('<button>').text('Update user').addClass('update-button');
+          let updateButton = $(`<button city=${user.city_name} country=${user.country_name}>`).text('Update user').addClass('update-button');
 
           deleteButton.on('click', function() {
             let row = $(this).closest('tr');
@@ -365,6 +365,13 @@ $(document).ready(function() {
             });
           });
 
+          updateButton.on('click', function() {
+            let row = $(this).closest('tr');
+
+            $('.update-button').click(function() {
+              $('#update-user-modal').show();
+            })
+          });
           actions.append(deleteButton);
           actions.append(updateButton);
 
@@ -374,6 +381,16 @@ $(document).ready(function() {
 
           row.attr('data-id', user.id);
         });
+        $('.rowTable .update-button').click(function() {
+          let country = $(this).attr('country');
+          let city = $(this).attr('city');
+
+          $('#city').append(`<option value="${city}"> ${city} </option>`);
+          $('#countries').append(`<option value="${country}"> ${country} </option>`);
+
+          $('#city').val(city);
+          $('#countries').val(country);
+        })
       },
       error: function(error) {
         console.log('Error at searching the user:', error);

@@ -118,8 +118,6 @@ export class GroupsService {
         group.users.some(user => user.email && user.email.includes(search))
       );
     }
-
-
     return groups;
   }
 
@@ -154,12 +152,12 @@ export class GroupsService {
 
   async getUsersStatusCode(groupId: number, letterId: number) {
     const query = `
-    select users.id, users.name, users.email, user_email_history.status_code from users
-    join user_email_history on users.id = user_email_history.user_id
-    join user_group ON user_group.user_id = users.id
-    join spams on spams.id = user_email_history.spam_id
+    select users.id, users.name, users.email, user_email_history.status_code from user_email_history
+    join users on users.id = user_email_history.user_id
+    join spams ON spams.id = user_email_history.spam_id
+    join groups on groups.id = spams.group_id
     join letters on letters.id = spams.letter_id
-    where user_group.group_id = ${groupId} and letters.id = ${letterId}
+    where groups.id = ${groupId} and letters.id = ${letterId}
     `;
 
     return this.usersRepository.query(query);
@@ -205,16 +203,8 @@ export class GroupsService {
     const groups = await this.groupsRepository.query(query);
 
     for (const group of groups) {
-      await this.removeUserFromGroup(group.id, userId);
+      await this.removeUserFromGroup(group.group_id, userId);
     }
-
-    const deleteQuery = `
-    DELETE FROM user_email_history WHERE user_id = ${userId}
-  `;
-
-    await this.sentUsersRepository.query(deleteQuery);
-
-    await this.usersRepository.delete(userId);
 
     return {
       msg: 'User deleted from all groups',

@@ -11,12 +11,14 @@ export class UsersController {
   constructor(private readonly usersService: UsersService, private readonly groupsService: GroupsService) {}
 
   @Get('filter')
-  getUsers(@Query() dto: FilterDto): Promise<Users[]> {
-    if(Object.keys(dto).length) {
-      return this.usersService.getUsersWithFilters(dto);
+  async getUsers(@Query() dto: FilterDto): Promise<Users[]> {
+    if (Object.keys(dto).length) {
+      const users = await this.usersService.getUsersWithFilters(dto);
+      return users.filter(user => user.visible === true);
     }
 
-    return this.usersService.findAll();
+    const users = await this.usersService.findAll();
+    return users.filter(user => user.visible === true);
   }
 
   @Post()
@@ -40,7 +42,7 @@ export class UsersController {
   }
 
   @Delete(':userId')
-  remove(@Param('userId') userId: number): Promise<{ msg: string }> {
-    return this.groupsService.removeUserFromAllGroups(userId);
+  remove(@Param('userId') userId: number): Promise<void> {
+    return this.usersService.remove(userId);
   }
 }

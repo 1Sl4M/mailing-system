@@ -43,9 +43,9 @@ export class UsersService {
         (user.id && user.id.toString().includes(search)) ||
         (user.name && user.name.includes(search)) ||
         (user.surname && user.surname.includes(search)) ||
-        // (user.otchestvo && user.otchestvo.includes(search)) ||
         (user.email && user.email.includes(search))
-        //(user.country && user.country.includes(search))
+        // (user.country.country_name && user.country.country_name.includes(search)) ||
+        // (user.city.city_name && user.city.city_name.includes(search))
       );
     }
 
@@ -54,7 +54,7 @@ export class UsersService {
 
   async findAll():Promise<Users[]> {
     const query = `
-    select users.id, users.name, users.surname, users.email, countries.country_name, cities.city_name from users 
+    select users.id, users.name, users.surname, users.email, countries.country_name, cities.city_name, users.visible from users 
     join countries on countries.country_id = users.country_id
     join cities on cities.city_id = users.city_id
     order by id
@@ -103,16 +103,18 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async remove(groupId:number, userId: number) {
+  async remove(userId: number) {
     const user = await this.usersRepository.findOneBy({id: userId});
 
     if(!user) {
       throw new NotFoundException('User not found');
     }
 
-    await this.groupsService.removeUserFromGroup(groupId, userId);
+    await this.groupsService.removeUserFromAllGroups(userId);
 
-    return this.usersRepository.delete(userId);
+    user.visible = false;
+
+    await this.usersRepository.save(user);
   }
 
   async getGroupInUsers(userId: number): Promise<{ name: string; groups: string; email: string }> {

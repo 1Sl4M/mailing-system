@@ -27,6 +27,9 @@ export class Users {
   @Column()
   email: string;
 
+  @Column()
+  visible: boolean;
+
   @ManyToOne(() => Country, country => country.users)
   @JoinColumn({ name: 'country_id' })
   country: Country;
