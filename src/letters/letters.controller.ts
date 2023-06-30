@@ -30,15 +30,15 @@ export class LettersController {
 
   @Get()
   async getAllLetters() {
-    return this.letterRepository.find();
+    return this.letterService.getAllLetters();
   }
 
   @Get('send-email/:id')
   async sendEmail(@Param('id') id: number, @Query('email') email: string) {
     try {
-      const letter = await this.letterService.getLetterFromDatabase(id);
+      const letter = await this.letterService.getOneLetter(id);
 
-      const user = await this.usersService.findByEmail(email);
+      const user = await this.usersService.findByEmailForSendMessage(email);
 
       if (!user) {
         throw new NotFoundException('Пользователь не найден');
@@ -54,7 +54,7 @@ export class LettersController {
 
   @Get('spam')
   async getAllSpams() {
-    return this.letterService.getAllSpam();
+    return this.letterService.getAllSpams();
   }
 
   @Get(':letterId')
@@ -64,7 +64,7 @@ export class LettersController {
 
   @Get('send-email/:id/:groupId')
   async sendMailToGroupMembers(@Param('groupId') groupId: number, @Param('id') id: number) {
-    const letter = await this.letterService.getLetterFromDatabase(id);
+    const letter = await this.letterService.getOneLetter(id);
 
     if(!letter) {
       throw new BadRequestException('Letter not found');

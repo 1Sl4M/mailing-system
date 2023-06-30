@@ -17,7 +17,7 @@ export class GroupsService {
   ) {
   }
 
-  async findAll() {
+  async findAllGroups() {
     const groups = await this.groupsRepository.find();
 
     const results = [];
@@ -40,7 +40,7 @@ export class GroupsService {
     return results;
   }
 
-  async getGroups(groupId: number) {
+  async findOneGroup(groupId: number) {
     const query = `
     select groups.id, groups.title, groups.description from spams
     join groups on groups.id = ${groupId}
@@ -51,7 +51,7 @@ export class GroupsService {
     return this.groupsRepository.query(query);
   }
 
-  async update(id: number, updateGroupDto: UpdateGroupDto): Promise<Groups> {
+  async updateGroup(id: number, updateGroupDto: UpdateGroupDto): Promise<Groups> {
     const group = await this.groupsRepository.findOneBy({ id });
 
     if (!group) {
@@ -66,7 +66,7 @@ export class GroupsService {
     return group;
   }
 
-  async remove(id: number): Promise<void> {
+  async removeGroup(id: number): Promise<void> {
     const group = await this.groupsRepository.findOneBy({ id });
 
     if (!group) {
@@ -113,7 +113,7 @@ export class GroupsService {
 
     const { search } = dto;
 
-    let groups = await this.findAll();
+    let groups = await this.findAllGroups();
 
     if (search) {
       groups = groups.filter(group =>

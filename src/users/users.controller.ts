@@ -17,7 +17,7 @@ export class UsersController {
       return users.filter(user => user.deleted === false);
     }
 
-    const users = await this.usersService.findAll();
+    const users = await this.usersService.findAllUsers();
     return users.filter(user => user.deleted === false);
   }
 
@@ -27,13 +27,13 @@ export class UsersController {
   }
 
   @Get(':userId')
-  getGroupInUsers(@Param('userId') userId: number) {
-    return this.usersService.getGroupInUsers(userId);
+  getUserWithGroups(@Param('userId') userId: number) {
+    return this.usersService.getUserWithGroups(userId);
   }
 
   @Get('email')
-  findByEmail(@Body() dto: CreateUserDto) {
-    return this.usersService.findByEmail(dto.email);
+  findByEmailForSendMessage(@Body() dto: CreateUserDto) {
+    return this.usersService.findByEmailForSendMessage(dto.email);
   }
 
   @Put(':id')

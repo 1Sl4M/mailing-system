@@ -20,7 +20,7 @@ export class UsersService {
 
   async create(dto: CreateUserDto): Promise<Users> {
     const { email, country_id, city_id } = dto;
-    const existingUser = await this.findByEmailForSendMessage(email);
+    const existingUser = await this.findByEmailForCreateUser(email);
 
     let newDate = new Date();
 
@@ -39,7 +39,7 @@ export class UsersService {
   async getUsersWithFilters(dto: FilterDto): Promise<Users[]> {
     const { search } = dto;
 
-    let users = await this.findAll();
+    let users = await this.findAllUsers();
 
     if (search) {
       users = users.filter(user =>
@@ -53,7 +53,7 @@ export class UsersService {
     return users;
   }
 
-  async findAll():Promise<Users[]> {
+  async findAllUsers():Promise<Users[]> {
     const query = `
     select users.id, users.name, users.surname, users.email, users.created_at, countries.country_name, cities.city_name, users.deleted from users 
     join countries on countries.country_id = users.country_id
@@ -64,7 +64,7 @@ export class UsersService {
     return this.usersRepository.query(query);
   }
 
-  async findByEmail(email: string): Promise<Users> {
+  async findByEmailForSendMessage(email: string): Promise<Users> {
     const user = await this.usersRepository.findOneBy({ email });
 
     if(!user) {
@@ -74,7 +74,7 @@ export class UsersService {
     return user;
   }
 
-  async findByEmailForSendMessage(email: string): Promise<Users | string> {
+  async findByEmailForCreateUser(email: string): Promise<Users | string> {
     const user = await this.usersRepository.findOneBy({ email: email });
 
     return user;
@@ -118,7 +118,7 @@ export class UsersService {
     await this.usersRepository.save(user);
   }
 
-  async getGroupInUsers(userId: number): Promise<{ name: string; groups: string; email: string }> {
+  async getUserWithGroups(userId: number): Promise<{ name: string; groups: string; email: string }> {
     const user = await this.usersRepository.findOneBy({ id: userId });
     if (!user) {
       throw new NotFoundException('User not found');

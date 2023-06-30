@@ -13,11 +13,7 @@ export class AppService {
     @InjectRepository(Users) private readonly usersRepository: Repository<Users>
   ) {
   }
-  getHello(): string {
-    return 'Hello World!';
-  }
-
-  getCountryAndCityId() {
+  getCountryAndCity() {
     const query = `
     select city_id, country_id from users
     `;

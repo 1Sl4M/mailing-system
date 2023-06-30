@@ -23,8 +23,12 @@ export class LetterService {
     return this.letterRepository.query(query);
   }
 
-  async getLetterFromDatabase(id: number): Promise<Letters> {
+  async getOneLetter(id: number): Promise<Letters> {
     return await this.letterRepository.findOneBy({ id });
+  }
+
+  async getAllLetters(): Promise<Letters[]> {
+    return this.letterRepository.find();
   }
 
   async createLetter(dto: CreateLetterDto):Promise<Letters> {
@@ -38,7 +42,7 @@ export class LetterService {
     return letter;
   }
 
-  async getAllSpam(): Promise<Spam[]> {
+  async getAllSpams(): Promise<Spam[]> {
     return this.spamRepository.find();
   }
 }

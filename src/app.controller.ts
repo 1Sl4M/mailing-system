@@ -11,8 +11,8 @@ export class AppController {
   }
 
   @Get('country/city')
-  getCountryAndCityId() {
-    return this.appService.getCountryAndCityId();
+  getCountryAndCity() {
+    return this.appService.getCountryAndCity();
   }
 
   @Get('city/:countryId')

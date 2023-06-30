@@ -15,18 +15,18 @@ export class GroupsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateGroupDto: UpdateGroupDto) {
-    return this.groupsService.update(id, updateGroupDto);
+  updateGroup(@Param('id') id: number, @Body() updateGroupDto: UpdateGroupDto) {
+    return this.groupsService.updateGroup(id, updateGroupDto);
   }
 
   @Get(':groupId')
-  getGroups(@Param('groupId') groupId: number) {
-    return this.groupsService.getGroups(groupId);
+  findOneGroup(@Param('groupId') groupId: number) {
+    return this.groupsService.findOneGroup(groupId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.groupsService.remove(+id);
+  removeGroup(@Param('id') id: number) {
+    return this.groupsService.removeGroup(+id);
   }
 
   @Get()
@@ -35,7 +35,7 @@ export class GroupsController {
       return this.groupsService.getGroupsWithFilters(dto);
     }
 
-    return this.groupsService.findAll();
+    return this.groupsService.findAllGroups();
   }
 
   @Get('statusCode/:groupId/letters/:letterId')
