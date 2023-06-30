@@ -24,9 +24,12 @@ export class UsersService {
 
     let newDate = new Date();
 
+    console.log(newDate.toISOString());
+
     if(!existingUser) {
       const query = `
-        insert into users(name, surname, email, country_id, city_id, created_at) values('${dto.name}', '${dto.surname}', '${dto.email}', ${country_id}, ${city_id}, 'newDate')
+        insert into users(name, surname, email, country_id, city_id, created_at, visible) 
+        values('${dto.name}', '${dto.surname}', '${dto.email}', ${country_id}, ${city_id}, '${newDate.toISOString()}', true)
       `;
 
       return this.usersRepository.query(query);
