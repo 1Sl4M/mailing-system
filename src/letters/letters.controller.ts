@@ -70,9 +70,12 @@ export class LettersController {
       throw new BadRequestException('Letter not found');
     }
 
+    let newDate = new Date();
+
     const spam = new Spam();
     spam.group_id = groupId;
     spam.letter_id = id;
+    spam.created_at = newDate;
 
     await this.spamRepository.save(spam);
 

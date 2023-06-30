@@ -1,5 +1,5 @@
 import {
-  Column,
+  Column, CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -24,6 +24,9 @@ export class Spam {
 
   @Column()
   status_code: string;
+
+  @CreateDateColumn()
+  created_at: Date;
 
   @OneToOne(() => Groups, group => group.spam)
   @JoinColumn({ name: "group_id" })

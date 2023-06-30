@@ -44,6 +44,7 @@ $(document).ready(function() {
           row.append('<td>' + user.name + '</td>');
           row.append('<td>' + user.surname + '</td>');
           row.append('<td>' + user.email + '</td>');
+          row.append('<td>' + (user.created_at ? user.created_at : '') + '</td>');
           row.append('<td>' + user.country_name + '</td>');
           row.append('<td>' + user.city_name + '</td>');
 
@@ -350,6 +351,7 @@ $(document).ready(function() {
           row.append('<td>' + user.name + '</td>');
           row.append('<td>' + user.surname + '</td>');
           row.append('<td>' + user.email + '</td>');
+          row.append('<td>' + (user.created_at ? user.created_at : '') + '</td>');
           row.append('<td>' + user.country_name + '</td>');
           row.append('<td>' + user.city_name + '</td>');
 

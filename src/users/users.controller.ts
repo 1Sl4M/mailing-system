@@ -14,11 +14,11 @@ export class UsersController {
   async getUsers(@Query() dto: FilterDto): Promise<Users[]> {
     if (Object.keys(dto).length) {
       const users = await this.usersService.getUsersWithFilters(dto);
-      return users.filter(user => user.visible === true);
+      return users.filter(user => user.deleted === false);
     }
 
     const users = await this.usersService.findAll();
-    return users.filter(user => user.visible === true);
+    return users.filter(user => user.deleted === false);
   }
 
   @Post()

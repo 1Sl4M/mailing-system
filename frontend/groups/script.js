@@ -25,6 +25,7 @@ $(document).ready(function() {
                   <td>${group.id}</td>
                   <td>${group.title}</td>
                   <td>${group.description}</td>
+                  <td>${(group.created_at ? group.created_at : '')}</td>
                   <td>
                     <ul>${usersList}</ul>
                   </td>

@@ -14,10 +14,10 @@ export class LetterService {
 
   async findLetters(letterId: number) {
     const query = `
-    select letters.id, letters.theme, letters.content from spams
-    join letters on letters.id = ${letterId}
+    select letters.id, letters.theme, letters.content, spams.created_at from spams
+    join letters on letters.id = spams.letter_id
     where letters.id = ${letterId}
-    group by letters.id, letters.theme, letters.content
+    group by letters.id, letters.theme, letters.content, spams.created_at
     `;
 
     return this.letterRepository.query(query);

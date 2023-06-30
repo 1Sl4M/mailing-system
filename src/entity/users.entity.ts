@@ -28,7 +28,7 @@ export class Users {
   email: string;
 
   @Column()
-  visible: boolean;
+  deleted: boolean;
 
   @ManyToOne(() => Country, country => country.users)
   @JoinColumn({ name: 'country_id' })
@@ -38,8 +38,8 @@ export class Users {
   @JoinColumn({name: 'city_id'})
   city: City;
 
-  // @CreateDateColumn({ type: 'date', default: () => 'CURRENT_TIMESTAMP' })
-  // created_at: Date;
+  @CreateDateColumn({ type: 'date', default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
 
   @ManyToMany(() => Groups)
   @JoinTable({

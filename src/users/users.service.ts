@@ -24,12 +24,10 @@ export class UsersService {
 
     let newDate = new Date();
 
-    console.log(newDate.toISOString());
-
     if(!existingUser) {
       const query = `
-        insert into users(name, surname, email, country_id, city_id, created_at, visible) 
-        values('${dto.name}', '${dto.surname}', '${dto.email}', ${country_id}, ${city_id}, '${newDate.toISOString()}', true)
+        insert into users(name, surname, email, country_id, city_id, created_at, deleted) 
+        values('${dto.name}', '${dto.surname}', '${dto.email}', ${country_id}, ${city_id}, '${newDate.toISOString()}', false)
       `;
 
       return this.usersRepository.query(query);
@@ -49,8 +47,6 @@ export class UsersService {
         (user.name && user.name.includes(search)) ||
         (user.surname && user.surname.includes(search)) ||
         (user.email && user.email.includes(search))
-        // (user.country.country_name && user.country.country_name.includes(search)) ||
-        // (user.city.city_name && user.city.city_name.includes(search))
       );
     }
 
@@ -59,7 +55,7 @@ export class UsersService {
 
   async findAll():Promise<Users[]> {
     const query = `
-    select users.id, users.name, users.surname, users.email, countries.country_name, cities.city_name, users.visible from users 
+    select users.id, users.name, users.surname, users.email, users.created_at, countries.country_name, cities.city_name, users.deleted from users 
     join countries on countries.country_id = users.country_id
     join cities on cities.city_id = users.city_id
     order by id
@@ -117,7 +113,7 @@ export class UsersService {
 
     await this.groupsService.removeUserFromAllGroups(userId);
 
-    user.visible = false;
+    user.deleted = true;
 
     await this.usersRepository.save(user);
   }

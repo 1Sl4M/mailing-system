@@ -21,8 +21,8 @@ export class Groups {
   @Column()
   description: string;
 
-  // @CreateDateColumn()
-  // createdgroupat: Date;
+  @CreateDateColumn()
+  created_at: Date;
 
   @ManyToMany(() => Users, user => user.groups)
   users: Users[];

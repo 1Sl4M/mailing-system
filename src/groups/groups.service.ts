@@ -27,6 +27,7 @@ export class GroupsService {
         title: group.title,
         id: group.id,
         description: group.description,
+        created_at: group.created_at,
         users: usersInGroup,
       });
     }
@@ -37,7 +38,6 @@ export class GroupsService {
     await this.groupsRepository.query(query);
 
     return results;
-
   }
 
   async getGroups(groupId: number) {
@@ -98,7 +98,14 @@ export class GroupsService {
   }
 
   async createGroup(dto: CreateGroupDto) {
-    return await this.groupsRepository.save(dto);
+    let newDate = new Date();
+
+    const query = `
+        insert into groups(title, description, created_at) 
+        values('${dto.title}', '${dto.description}', '${newDate.toISOString()}')
+      `;
+
+    return await this.groupsRepository.query(query);
   }
 
   async getGroupsWithFilters(dto: FilterDto): Promise<Groups[]> {

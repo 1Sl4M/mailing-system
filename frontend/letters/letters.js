@@ -104,6 +104,7 @@ $(document).ready(function() {
                 }
 
                 row.append('<td>' + letter.content + '</td>');
+                row.append('<td>' + letter.created_at + '</td>');
 
                 $.ajax({
                   url: `${defaultUrl}/groups/${item.group_id}`,
