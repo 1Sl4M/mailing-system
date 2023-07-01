@@ -104,7 +104,6 @@ $(document).ready(function() {
 
   $('#update-button-modal').click(function() {
     getUsers();
-    location.reload();
   })
 
   function getCountriesForCreateUser() {

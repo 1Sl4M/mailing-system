@@ -38,11 +38,6 @@ export class GroupsController {
     return this.groupsService.findAllGroups();
   }
 
-  @Get('statusCode/:groupId/letters/:letterId')
-  getUsersStatusCode(@Param('groupId') groupId: number, @Param('letterId') letterId: number) {
-    return this.groupsService.getUsersStatusCode(groupId, letterId);
-  }
-
   @Post(':groupId/users/:userId')
   addUserToGroup(@Param('groupId') groupId: number, @Param('userId') userId: number) {
     return this.groupsService.addUserToGroup(groupId, userId);

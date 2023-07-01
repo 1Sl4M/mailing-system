@@ -4,7 +4,7 @@ import { UsersController } from './users.controller';
 import { Users } from "../entity/users.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Letters } from "../entity/letters.entity";
-import { MailService } from "./mail.service";
+import { MailService } from "../letters/mail.service";
 import { Groups } from "../entity/groups.entity";
 import { GroupsService } from "../groups/groups.service";
 import { ConfigModule } from "@nestjs/config";

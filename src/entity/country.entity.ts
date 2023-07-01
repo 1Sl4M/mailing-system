@@ -5,10 +5,10 @@ import { City } from './city.entity';
 @Entity({ name: 'countries' })
 export class Country {
   @PrimaryGeneratedColumn()
-  country_id: number;
+  country_id: number;// just id, need one stylistic
 
   @Column()
-  country_name: string;
+  country_name: string; // just name
 
   @OneToMany(() => Users, user => user.country)
   @JoinColumn({ name: 'country_id' })

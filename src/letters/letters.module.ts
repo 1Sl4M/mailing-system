@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { LetterService } from './letter.service';
+import { LettersService } from './letters.service';
 import { LettersController } from './letters.controller';
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Letters } from "../entity/letters.entity";
 import { Users } from "../entity/users.entity";
-import { MailService } from "../users/mail.service";
+import { MailService } from "./mail.service";
 import { UsersService } from "../users/users.service";
 import { Groups } from "../entity/groups.entity";
 import { GroupsService } from "../groups/groups.service";
@@ -20,6 +20,6 @@ import { City } from "../entity/city.entity";
     TypeOrmModule.forFeature([Users, Letters, Groups, Spam, SentUsers, Country, City])
   ],
   controllers: [LettersController],
-  providers: [LetterService, MailService, UsersService, GroupsService]
+  providers: [LettersService, MailService, UsersService, GroupsService]
 })
 export class LettersModule {}

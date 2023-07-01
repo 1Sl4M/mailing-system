@@ -100,11 +100,11 @@ $(document).ready(function() {
                     row.append('<td class="partial">' + status_code + '</td>');
                     break;
                   default:
-                    row.append('<td>' + status_code + '</td>');
+                    row.append('<td>' + (status_code ? status_code : '') + '</td>');
                 }
 
                 row.append('<td>' + letter.content + '</td>');
-                row.append('<td>' + letter.created_at + '</td>');
+                row.append('<td>' + (letter.created_at ? letter.created_at : '') + '</td>');
 
                 $.ajax({
                   url: `${defaultUrl}/groups/${item.group_id}`,
@@ -119,7 +119,7 @@ $(document).ready(function() {
                     row.append(groupCell);
 
                     $.ajax({
-                      url: `${defaultUrl}/groups/statusCode/${item.group_id}/letters/${letter.id}`,
+                      url: `${defaultUrl}/users/statusCode/${item.group_id}/letters/${letter.id}`,
                       type: 'GET',
                       success: function(users) {
                         console.log(item.group_id);
@@ -166,7 +166,6 @@ $(document).ready(function() {
   }
 
   loadSpam();
-
 
   function createLetter(groupId, theme, content) {
     $.ajax({

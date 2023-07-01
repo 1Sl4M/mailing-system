@@ -31,6 +31,11 @@ export class UsersController {
     return this.usersService.getUserWithGroups(userId);
   }
 
+  @Get('statusCode/:groupId/letters/:letterId')
+  getUsersStatusCode(@Param('groupId') groupId: number, @Param('letterId') letterId: number) {
+    return this.usersService.getUsersStatusCode(groupId, letterId);
+  }
+
   @Get('email')
   findByEmailForSendMessage(@Body() dto: CreateUserDto) {
     return this.usersService.findByEmailForSendMessage(dto.email);

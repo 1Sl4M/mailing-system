@@ -6,7 +6,7 @@ import { CreateLetterDto } from "./dto/create-letter.dto";
 import { Spam } from "../entity/spam.entity";
 
 @Injectable()
-export class LetterService {
+export class LettersService {
   constructor(
     @InjectRepository(Letters) private readonly letterRepository: Repository<Letters>,
     @InjectRepository(Spam) private readonly spamRepository: Repository<Spam>,
@@ -18,6 +18,7 @@ export class LetterService {
     join letters on letters.id = spams.letter_id
     where letters.id = ${letterId}
     group by letters.id, letters.theme, letters.content, spams.created_at
+    order by letters.id
     `;
 
     return this.letterRepository.query(query);

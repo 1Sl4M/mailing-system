@@ -80,6 +80,19 @@ export class UsersService {
     return user;
   }
 
+  async getUsersStatusCode(groupId: number, letterId: number) {
+    const query = `
+    select users.id, users.name, users.email, user_email_history.status_code from user_email_history
+    join users on users.id = user_email_history.user_id
+    join spams ON spams.id = user_email_history.spam_id
+    join groups on groups.id = spams.group_id
+    join letters on letters.id = spams.letter_id
+    where groups.id = ${groupId} and letters.id = ${letterId}
+    `;
+
+    return this.usersRepository.query(query);
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.usersRepository.findOneBy({id});
 
@@ -87,21 +100,17 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    user.name = updateUserDto.name;
-    user.surname = updateUserDto.surname;
-    user.email = updateUserDto.email;
-
     const query = `
-    update users set country_id = ${updateUserDto.country_id} where id = ${id}
-    `;
-    const query1 = `
-    update users set city_id = ${updateUserDto.city_id} where id = ${id}
+    update users set 
+        name = '${updateUserDto.name}',
+        surname = '${updateUserDto.surname}' ,
+        email = '${updateUserDto.email}' ,
+        country_id = ${updateUserDto.country_id} ,
+        city_id = ${updateUserDto.city_id}
+    where id = ${id}
     `;
 
-    await this.usersRepository.query(query);
-    await this.usersRepository.query(query1);
-
-    return this.usersRepository.save(user);
+    return this.usersRepository.query(query);
   }
 
   async remove(userId: number) {

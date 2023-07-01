@@ -13,6 +13,7 @@ import { LettersModule } from './letters/letters.module';
 import { GroupsModule } from './groups/groups.module';
 import { Country } from "./entity/country.entity";
 import { City } from "./entity/city.entity";
+import { LocationModule } from './location/location.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { City } from "./entity/city.entity";
     UsersModule,
     LettersModule,
     GroupsModule,
+    LocationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

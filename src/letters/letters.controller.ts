@@ -9,8 +9,8 @@ import {
   NotFoundException,
   BadRequestException
 } from "@nestjs/common";
-import { MailService } from "../users/mail.service";
-import { LetterService } from "./letter.service";
+import { MailService } from "./mail.service";
+import { LettersService } from "./letters.service";
 import { UsersService } from "../users/users.service";
 import { CreateLetterDto } from "./dto/create-letter.dto";
 import { Spam } from "../entity/spam.entity";
@@ -22,7 +22,7 @@ import { Letters } from "../entity/letters.entity";
 export class LettersController {
   constructor(
     @Inject(MailService) private readonly mailService: MailService,
-    private readonly letterService: LetterService,
+    private readonly letterService: LettersService,
     @Inject(UsersService) private readonly usersService: UsersService,
     @InjectRepository(Spam) private readonly spamRepository: Repository<Spam>,
     @InjectRepository(Letters) private readonly letterRepository: Repository<Letters>
